@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.lang.Math;
+import java.lang.Thread;
 
 public class GameMap {
 
@@ -43,6 +44,7 @@ public class GameMap {
             allFields.add(new Field(i));
             
         }
+        
         startingFieldsMisterX.add(allFields.get(34));
         startingFieldsMisterX.add(allFields.get(44));
         startingFieldsMisterX.add(allFields.get(50));
@@ -56,6 +58,7 @@ public class GameMap {
         startingFieldsMisterX.add(allFields.get(165));
         startingFieldsMisterX.add(allFields.get(169));
         startingFieldsMisterX.add(allFields.get(171));
+  
 
         startingFieldsDetectives.add(allFields.get(12));
         startingFieldsDetectives.add(allFields.get(25));
@@ -73,7 +76,7 @@ public class GameMap {
         startingFieldsDetectives.add(allFields.get(140));
         startingFieldsDetectives.add(allFields.get(154));
         startingFieldsDetectives.add(allFields.get(173));
-
+    
     }
 
     private void initializePlayers(){
@@ -82,7 +85,7 @@ public class GameMap {
         }
         misterX=new MisterX(4, startingFieldsMisterX.remove( (int)(Math.random() * ((startingFieldsMisterX.size()-1) + 1)) ));
 
-        currentPlayer=detectives.get(0);
+        currentPlayer=misterX;
     }
 
     public void playerToString(){
@@ -96,22 +99,38 @@ public class GameMap {
         return !allFields.get(field.getId()-1).isOccupied();
     }
 
-    public List<Move> getLegalMoves(Player player,boolean isDetective){
-        List<Move> legalMoves=new ArrayList<>();
-        for(int key:graph.keySet()){
-            if(player.getCurrentField().getId()==key){
-                for(List<Integer> transports:graph.get(key)){
-                    for(Integer endPoint:transports){
-                        if (!allFields.get(endPoint-1).isOccupied()){
-                            Move legalMove=new Move(new Field(key), new Field(endPoint), VehicleType.values()[graph.get(key).indexOf(transports)]);
-                            legalMoves.add(legalMove);
-                        }else{
-                            System.out.println("MITSPIELER IN SICHT");
-                        }
-                    }
-                }
+    public boolean isFieldWithoutDetectives(Field field){
+        for(Detective otherDetective:detectives){
+            if (otherDetective.getCurrentField().equals(field)){
+                return false;
             }
         }
+        return true;
+    }
+
+    public List<Move> getLegalMoves(Player player,boolean isDetective){
+        List<Move> legalMoves=new ArrayList<>();
+   
+        int key=player.getCurrentField().getId();
+        for(List<Integer> transports:graph.get(key)){
+            for(Integer endPoint:transports){
+                if (!isDetective){
+                    if (!allFields.get(endPoint-1).isOccupied()){
+                        Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
+                        legalMoves.add(legalMove);
+                    }
+                }else{
+                
+                    if(isFieldWithoutDetectives(allFields.get(endPoint-1))){
+                        
+                        Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
+                        legalMoves.add(legalMove);
+                    }
+                }
+                
+            }
+        }
+     
         return legalMoves;
     }
 
@@ -119,7 +138,7 @@ public class GameMap {
         return graph;
     }
 
-    public int getRound(){
+    public int getRounds(){
         return round;
     }
 
@@ -131,21 +150,31 @@ public class GameMap {
         return currentPlayer;
     }
 
-    public void makeMove() {
+    public Player getMisterX(){
+        return misterX;
+    }
+
+    public void makeMove() throws InterruptedException {
+
+        if (twoPlayersSameField()){
+            throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
+        }
+
         Move move=currentPlayer.getMove(this);
 
         if (move==null){
+            //System.out.println("No moves");
+            //Thread.sleep(100);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
             }else{
                 gameState=GameState.DETECTIVES_WIN;
             }
-        }
-        else if (!isFieldEmpty(move.getTargetField())){
-            System.out.println(move);
-            throw new IllegalArgumentException("Illegal Move from the Player");
         }else{
+
+            //System.out.println("Player"+currentPlayer.getId()+" "+move);
+            //Thread.sleep(100);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
@@ -175,6 +204,22 @@ public class GameMap {
 
     public boolean undoMove(Move move){
         return true;
+    }
+
+    public boolean twoPlayersSameField(){
+        for(Player player:detectives){
+            for(Player player2:detectives){
+                if(player!=player2){
+                    if (player.getCurrentField()==player2.getCurrentField()){
+                        return true;
+                    }
+                }
+            }
+            if (player.getCurrentField()==misterX.getCurrentField()){
+                return true;
+            }
+        }
+        return false;
     }
 
 

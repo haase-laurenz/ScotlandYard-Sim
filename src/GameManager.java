@@ -1,6 +1,8 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.lang.Thread;
+
 
 public class GameManager {
 
@@ -11,20 +13,38 @@ public class GameManager {
     public GameManager(){
     }
     
-    public void playGames(int gamesCount) throws FileNotFoundException, IOException {
+    public void playGames(int gamesCount) throws FileNotFoundException, IOException,InterruptedException {
         int currentGame=0;
-        this.gameMap=new GameMap();
+        int detective_wins=0;
+        int misterX_wins=0;
+        int total_rounds=0;
+        long startTime = System.currentTimeMillis();
+        
         while(currentGame<gamesCount){
+            this.gameMap=new GameMap();
             while(gameMap.getGameState()==GameState.ONGOING){
                 gameMap.makeMove();
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
-                System.out.println("DETECTIVES WIN");
+                detective_wins++;
+                total_rounds+=gameMap.getRounds()-1;
+                double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
+                System.out.print("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                    schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      "                  
+                ) ;
             }else{
-                System.out.println("MISTER-X WIN");
+                misterX_wins++;
+                total_rounds+=gameMap.getRounds()-1;
+                double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
+                System.out.print("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                    schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      "                  
+                ) ;
             }
             currentGame++;
         }
+        System.out.println("");
+        long endTime = System.currentTimeMillis();
+        System.out.println("Runtime: " + (endTime - startTime) + " Millisekunden");
 
     }
 
