@@ -4,9 +4,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 import java.lang.Math;
-import java.lang.Thread;
 
 public class GameMap {
 
@@ -23,6 +26,9 @@ public class GameMap {
     private List<Detective> detectives=new ArrayList<>();
     private MisterX misterX;
     private Player currentPlayer;
+
+    private Field lastMisterXField=null;
+    private List<Field> misterXPossibleFields=new ArrayList<>();
     
 
     
@@ -119,10 +125,8 @@ public class GameMap {
                         Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
                         legalMoves.add(legalMove);
                     }
-                }else{
-                
-                    if(isFieldWithoutDetectives(allFields.get(endPoint-1))){
-                        
+                }else{   
+                    if(isFieldWithoutDetectives(allFields.get(endPoint-1)) && VehicleType.values()[graph.get(key).indexOf(transports)]!=VehicleType.SHIP){
                         Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
                         legalMoves.add(legalMove);
                     }
@@ -138,6 +142,12 @@ public class GameMap {
         return graph;
     }
 
+    public List<Detective> getDetectives(){
+        return detectives;
+    }
+    public List<Field> getAllFields(){
+        return allFields;
+    }
     public int getRounds(){
         return round;
     }
@@ -150,8 +160,8 @@ public class GameMap {
         return currentPlayer;
     }
 
-    public Player getMisterX(){
-        return misterX;
+    public Field getLastMisterXField(){
+        return lastMisterXField;
     }
 
     public void makeMove() throws InterruptedException {
@@ -181,9 +191,19 @@ public class GameMap {
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
+                if (index<3){
+                    currentPlayer=detectives.get(index+1);
+                }else{
+                    currentPlayer=misterX;
+                    round++;
+                }
+
             }else{
+                if (round==2 || round==7 || round==12 || round==17 || round==23){
+                    lastMisterXField=currentPlayer.getCurrentField();
+                }
+                
                 currentPlayer=detectives.get(0);
-                round++;
             }
 
             if (round>30){
@@ -206,7 +226,7 @@ public class GameMap {
         return true;
     }
 
-    public boolean twoPlayersSameField(){
+    private boolean twoPlayersSameField(){
         for(Player player:detectives){
             for(Player player2:detectives){
                 if(player!=player2){
@@ -221,6 +241,50 @@ public class GameMap {
         }
         return false;
     }
+
+    public int distanceBetween(Field f1,Field f2){
+        
+
+        // Verwende eine Queue, um die Felder zu durchlaufen
+        Queue<Field> queue = new LinkedList<>();
+        // Verwende eine Set, um bereits besuchte Felder zu verfolgen
+        Set<Field> visited = new HashSet<>();
+
+        queue.add(f1);
+        visited.add(f1);
+
+        int distance=0;
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+
+            // Durchlaufe alle Felder auf dem aktuellen Level
+            for (int i = 0; i < levelSize; i++) {
+                Field currentField = queue.poll();
+
+                // Überprüfe, ob das aktuelle Feld das Ziel ist
+                if (currentField==f2) {
+                    return distance;
+                }
+
+                // Durchlaufe alle Nachbarfelder des aktuellen Feldes
+                int key=currentField.getId();
+                for(List<Integer> transports:graph.get(key)){
+                    for(Integer endPoint:transports){
+                        if (!visited.contains(allFields.get(endPoint-1))) {
+                            queue.add(allFields.get(endPoint-1));
+                            visited.add(allFields.get(endPoint-1));
+                        } 
+                    }
+                }
+            }
+            distance++;
+        }
+
+        return distance;
+    }
+
+    
 
 
 

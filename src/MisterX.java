@@ -11,13 +11,28 @@ public class MisterX extends Player {
     public Move getMove(GameMap gameMap){
 
         List<Move> myMoves=gameMap.getLegalMoves(this,false);
-        
         if (myMoves.size()==0) return null;
 
 
-        int index=(int)(Math.random() * ((myMoves.size()-1) + 1));
-        return myMoves.get(index);
+        double bestScore=-1000;
+        Move bestMove=null;
+
+        for (Move move:myMoves){
+            double score=0;
+            for (Detective detective:gameMap.getDetectives()){
+                score+=gameMap.distanceBetween(this.getCurrentField(),detective.getCurrentField());
+            }
+            score/=4;
+            if (score>bestScore){
+                bestScore=score;
+                bestMove=move;
+            }
+        }
+
+        return bestMove;
     }
+
+    
 
     
 }
