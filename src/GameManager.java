@@ -6,29 +6,22 @@ public class GameManager {
 
     
     private GameMap gameMap;
-    private List<Detective> detectives;
-    private MisterX misterX;
-    private Player currentplayer;
     
 
-    public GameManager() throws FileNotFoundException, IOException {
-        this.gameMap=new GameMap();
-    
+    public GameManager(){
     }
-
     
-    public void playGames(int gamesCount){
+    public void playGames(int gamesCount) throws FileNotFoundException, IOException {
         int currentGame=0;
-        
+        this.gameMap=new GameMap();
         while(currentGame<gamesCount){
             while(gameMap.getGameState()==GameState.ONGOING){
-                Move nextMove=currentplayer.getMove();
-                gameMap.makeMove(nextMove);
+                gameMap.makeMove();
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 System.out.println("DETECTIVES WIN");
             }else{
-                System.out.println("MISTERX WIN");
+                System.out.println("MISTER-X WIN");
             }
             currentGame++;
         }

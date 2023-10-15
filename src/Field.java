@@ -11,8 +11,16 @@ public class Field {
         return id;
     }
     
-    public boolean getOccupied(){
+    public boolean isOccupied(){
         return occupied;
     }
-    
+
+    public void setOccupiedTrue(){
+        this.occupied=true;
+    }
+
+    public void setOccupiedFalse(){
+        this.occupied=false;
+    }
+
 }

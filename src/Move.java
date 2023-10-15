@@ -22,7 +22,7 @@ public class Move {
     }
 
     public String toString(){
-        return "moved from "+startField.getId()+" to "+targetField.getId()+" via "+vehicleType;
+        return "move from "+startField.getId()+" to "+targetField.getId()+" via "+vehicleType;
     }
 
 }

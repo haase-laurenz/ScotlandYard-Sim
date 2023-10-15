@@ -1,3 +1,6 @@
 public enum VehicleType {
-    TAXI,BUS,TRAIN,SHIP
+    TAXI,
+    BUS,
+    TRAIN,
+    SHIP
 }

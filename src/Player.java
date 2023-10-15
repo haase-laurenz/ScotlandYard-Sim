@@ -4,27 +4,32 @@ public class Player {
     
     private int id;
     private Field currentField;
-    private List<Player> mitspieler;
 
-    public Player(int id,Field currentField,List<Player> mitspieler){
+
+    public Player(int id,Field currentField){
+
         this.id=id;
         this.currentField=currentField;
-        this.mitspieler=mitspieler;
+        this.currentField.setOccupiedTrue();
+  
+
     }
 
     public int getId(){
         return id;
     }
 
-    public Field getCurretField(){
+    public Field getCurrentField(){
         return currentField;
     }
 
-    public List<Player> getMitspieler(){
-        return mitspieler;
+    public void setCurrentField(Field newField){
+        this.currentField.setOccupiedFalse();
+        this.currentField=newField;
+        this.currentField.setOccupiedTrue();
     }
 
-    public Move getMove(){
+    public Move getMove(GameMap gameMap){
         return null;
     }
 

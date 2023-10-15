@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.lang.Math;
 
 public class GameMap {
 
@@ -12,19 +13,16 @@ public class GameMap {
 
     private HashMap <Integer,List<List<Integer>>> graph=new HashMap<>();
     private List<Field> allFields=new ArrayList<>();
-    private final List<Field> startingFieldsDetectives = new ArrayList<Field>() {{
-        add(new Field(3));
-        add(new Field(3));
-        add(new Field(3));
-    }};
-    private final List<Field> startingFieldsMisterX = new ArrayList<Field>() {{
-        add(new Field(3));
-        add(new Field(3));
-        add(new Field(3));
-    }};
+    private List<Field> startingFieldsDetectives = new ArrayList<>();
+    private List<Field> startingFieldsMisterX = new ArrayList<>();
 
     private int round;
     private GameState gameState;
+
+    private List<Detective> detectives=new ArrayList<>();
+    private MisterX misterX;
+    private Player currentPlayer;
+    
 
     
 
@@ -33,6 +31,9 @@ public class GameMap {
     public GameMap() throws FileNotFoundException, IOException{
         this.graph=loadGraphFromCSV();
         initializeFields();
+        initializePlayers();
+        this.round=0;
+        this.gameState=GameState.ONGOING;
         
     }
 
@@ -40,7 +41,78 @@ public class GameMap {
         allFields.clear();
         for (int i=1;i<200;i++){
             allFields.add(new Field(i));
+            
         }
+        startingFieldsMisterX.add(allFields.get(34));
+        startingFieldsMisterX.add(allFields.get(44));
+        startingFieldsMisterX.add(allFields.get(50));
+        startingFieldsMisterX.add(allFields.get(70));
+        startingFieldsMisterX.add(allFields.get(77));
+        startingFieldsMisterX.add(allFields.get(103));
+        startingFieldsMisterX.add(allFields.get(105));
+        startingFieldsMisterX.add(allFields.get(126));
+        startingFieldsMisterX.add(allFields.get(131));
+        startingFieldsMisterX.add(allFields.get(145));
+        startingFieldsMisterX.add(allFields.get(165));
+        startingFieldsMisterX.add(allFields.get(169));
+        startingFieldsMisterX.add(allFields.get(171));
+
+        startingFieldsDetectives.add(allFields.get(12));
+        startingFieldsDetectives.add(allFields.get(25));
+        startingFieldsDetectives.add(allFields.get(28));
+        startingFieldsDetectives.add(allFields.get(33));
+        startingFieldsDetectives.add(allFields.get(49));
+        startingFieldsDetectives.add(allFields.get(52));
+        startingFieldsDetectives.add(allFields.get(90));
+        startingFieldsDetectives.add(allFields.get(93));
+        startingFieldsDetectives.add(allFields.get(102));
+        startingFieldsDetectives.add(allFields.get(111));
+        startingFieldsDetectives.add(allFields.get(116));
+        startingFieldsDetectives.add(allFields.get(122));
+        startingFieldsDetectives.add(allFields.get(137));
+        startingFieldsDetectives.add(allFields.get(140));
+        startingFieldsDetectives.add(allFields.get(154));
+        startingFieldsDetectives.add(allFields.get(173));
+
+    }
+
+    private void initializePlayers(){
+        for (int i=0;i<=3;i++){
+            detectives.add(new Detective(i, startingFieldsDetectives.remove( (int)(Math.random() * ((startingFieldsDetectives.size()-1) + 1)) )));
+        }
+        misterX=new MisterX(4, startingFieldsMisterX.remove( (int)(Math.random() * ((startingFieldsMisterX.size()-1) + 1)) ));
+
+        currentPlayer=detectives.get(0);
+    }
+
+    public void playerToString(){
+        for(Player player:detectives){
+            System.out.println("Detective "+player.getId()+" steht auf dem Feld "+player.getCurrentField().getId());
+        }
+        System.out.println("MisterX steht auf dem Feld "+misterX.getCurrentField().getId());
+    }
+
+    public boolean isFieldEmpty(Field field){
+        return !allFields.get(field.getId()-1).isOccupied();
+    }
+
+    public List<Move> getLegalMoves(Player player,boolean isDetective){
+        List<Move> legalMoves=new ArrayList<>();
+        for(int key:graph.keySet()){
+            if(player.getCurrentField().getId()==key){
+                for(List<Integer> transports:graph.get(key)){
+                    for(Integer endPoint:transports){
+                        if (!allFields.get(endPoint-1).isOccupied()){
+                            Move legalMove=new Move(new Field(key), new Field(endPoint), VehicleType.values()[graph.get(key).indexOf(transports)]);
+                            legalMoves.add(legalMove);
+                        }else{
+                            System.out.println("MITSPIELER IN SICHT");
+                        }
+                    }
+                }
+            }
+        }
+        return legalMoves;
     }
 
     public HashMap <Integer,List<List<Integer>>> getGraph(){
@@ -55,8 +127,50 @@ public class GameMap {
         return gameState;
     }
 
-    public boolean makeMove(Move move){
-        return true;
+    public Player getCurrentplayer(){
+        return currentPlayer;
+    }
+
+    public void makeMove() {
+        Move move=currentPlayer.getMove(this);
+
+        if (move==null){
+            if (detectives.contains(currentPlayer)){
+                int index=detectives.indexOf(currentPlayer);
+                currentPlayer= (index<3)? detectives.get(index+1) : misterX;
+            }else{
+                gameState=GameState.DETECTIVES_WIN;
+            }
+        }
+        else if (!isFieldEmpty(move.getTargetField())){
+            System.out.println(move);
+            throw new IllegalArgumentException("Illegal Move from the Player");
+        }else{
+            currentPlayer.setCurrentField(move.getTargetField());
+
+
+            if (detectives.contains(currentPlayer)){
+                int index=detectives.indexOf(currentPlayer);
+                currentPlayer= (index<3)? detectives.get(index+1) : misterX;
+            }else{
+                currentPlayer=detectives.get(0);
+                round++;
+            }
+
+            if (round>30){
+                gameState=GameState.MISTERX_WIN;  
+            }
+
+            for(Player player:detectives){
+                if (player.getCurrentField()==misterX.getCurrentField()){
+                    gameState=GameState.DETECTIVES_WIN;
+                }
+            }
+
+        }
+
+        
+
     }
 
     public boolean undoMove(Move move){
