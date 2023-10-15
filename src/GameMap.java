@@ -29,18 +29,22 @@ public class GameMap {
 
     private Field lastMisterXField=null;
     private List<Field> misterXPossibleFields=new ArrayList<>();
+
+    private boolean misterXPlayedByHuman;
     
 
     
 
 
 
-    public GameMap() throws FileNotFoundException, IOException{
+    public GameMap(boolean misterXPlayedByHuman) throws FileNotFoundException, IOException{
+        this.round=0;
+        this.gameState=GameState.ONGOING;
+        this.misterXPlayedByHuman=misterXPlayedByHuman;
         this.graph=loadGraphFromCSV();
         initializeFields();
         initializePlayers();
-        this.round=0;
-        this.gameState=GameState.ONGOING;
+        
         
     }
 
@@ -87,9 +91,9 @@ public class GameMap {
 
     private void initializePlayers(){
         for (int i=0;i<=3;i++){
-            detectives.add(new Detective(i, startingFieldsDetectives.remove( (int)(Math.random() * ((startingFieldsDetectives.size()-1) + 1)) )));
+            detectives.add(new Detective(i, startingFieldsDetectives.remove( (int)(Math.random() * ((startingFieldsDetectives.size()-1) + 1) )),false));
         }
-        misterX=new MisterX(4, startingFieldsMisterX.remove( (int)(Math.random() * ((startingFieldsMisterX.size()-1) + 1)) ));
+        misterX=new MisterX(4, startingFieldsMisterX.remove( (int)(Math.random() * ((startingFieldsMisterX.size()-1) + 1)) ),misterXPlayedByHuman);
 
         currentPlayer=misterX;
     }
@@ -169,11 +173,10 @@ public class GameMap {
         if (twoPlayersSameField()){
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
         }
-
         Move move=currentPlayer.getMove(this);
 
         if (move==null){
-            //System.out.println("No moves");
+            //System.out.println("Player"+currentPlayer.getId()+"has no moves");
             //Thread.sleep(100);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
@@ -206,7 +209,7 @@ public class GameMap {
                 currentPlayer=detectives.get(0);
             }
 
-            if (round>30){
+            if (round==30){
                 gameState=GameState.MISTERX_WIN;  
             }
 

@@ -2,14 +2,15 @@ public class Player {
     
     private int id;
     private Field currentField;
+    public boolean playedByHuman;
 
 
-    public Player(int id,Field currentField){
+    public Player(int id,Field currentField,boolean playedByHuman){
 
         this.id=id;
         this.currentField=currentField;
         this.currentField.setOccupiedTrue();
-  
+        this.playedByHuman=playedByHuman;
 
     }
 

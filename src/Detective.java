@@ -3,8 +3,8 @@ import java.lang.Math;
 
 public class Detective extends Player{
 
-    public Detective(int id,Field currentField){
-        super(id, currentField);
+    public Detective(int id,Field currentField,boolean playedByHuman){
+        super(id, currentField,playedByHuman);
     }
 
     @Override
