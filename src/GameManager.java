@@ -50,6 +50,10 @@ public class GameManager {
 
     }
 
+    public GameMap getGameMap(){
+        return gameMap;
+    }
+
     
 
 
