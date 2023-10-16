@@ -28,22 +28,24 @@ public class GameGUI {
         frame.setVisible(true);
     }
 
-    public void drawPlayers(List<Detective> detectives) {
+    public void drawPlayers(List<Detective> detectives,MisterX misterX) {
         // Hier rufe eine Methode auf dem GameMapPanel auf, um die Spieler zu zeichnen
-        gameMapPanel.drawPlayers(detectives);
+        gameMapPanel.drawPlayers(detectives,misterX);
     }
 
     // Neues Panel für das Spielbrett
     private class GameMapPanel extends JPanel {
         private ImageIcon mapImage;
         private List<Detective> detectives;
+        private MisterX misterX;
 
         public GameMapPanel(ImageIcon mapImage) {
             this.mapImage = mapImage;
         }
 
-        public void drawPlayers(List<Detective> detectives) {
+        public void drawPlayers(List<Detective> detectives,MisterX misterX) {
             this.detectives = detectives;
+            this.misterX=misterX;
             repaint(); // Löst die Neuzeichnung des Panels aus
         }
 
@@ -58,45 +60,41 @@ public class GameGUI {
 
             // Zeichne die Spieler als Kreise
             if (detectives != null) {
-                Color[] colors=new Color[4];
+                Color[] colors=new Color[5];
                 colors[0]=Color.RED;
                 colors[1]=Color.BLUE;
                 colors[2]=Color.GREEN;
                 colors[3]=Color.YELLOW;
+                colors[4]=Color.BLACK;
                 for (Detective detective : detectives) {
                     int index=detectives.indexOf(detective);
                     int[] coords=FieldIdToCoords(detective.getCurrentField().getId());
                     int x = coords[0]; // Du musst die tatsächlichen Koordinaten deiner Spieler verwenden
                     int y = coords[1];
-                    Color transparentColor = new Color(colors[index].getRed(), colors[index].getGreen(), colors[index].getBlue(), 128); // 128 steht für die Transparenz (0-255)
-
-                    // Setze die transparente Farbe
+                    Color transparentColor = new Color(colors[index].getRed(), colors[index].getGreen(), colors[index].getBlue(), 200); // 128 steht für die Transparenz (0-255)
                     g.setColor(transparentColor);
 
-                    // Verwende Graphics2D, um Transparenz zu unterstützen
-                    Graphics2D g2d = (Graphics2D) g;
-                    Composite originalComposite = g2d.getComposite(); // Speichere das aktuelle Composite
-
-                    // Setze ein neues Composite mit Transparenz
-                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Hier 0.5f steht für 50% Transparenz
-
-                    // Zeichne den transparenten Kreis
-                    g2d.fillOval(x, y, 20, 20); // Beispiel: 20x20 Kreis
-
-                    // Setze das ursprüngliche Composite zurück
-                    g2d.setComposite(originalComposite);
+                    g.fillOval(x, y, 40, 40); 
 
                     String fieldIdText = "Detective" +detective.getId()+" steht auf dem Feld "+ detective.getCurrentField().getId();
                     g.setColor(Color.BLACK);
                     g.drawString(fieldIdText, 1300,getHeight()/2+20*index); // Just ein Beispiel, passe die Positionierung nach Bedarf an
                 }
+                int[] coords=FieldIdToCoords(misterX.getCurrentField().getId());
+                int x = coords[0];
+                int y = coords[1];
+                Color transparentColor = new Color(colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue(), 200); // 128 steht für die Transparenz (0-255)
+                g.setColor(transparentColor);
+                g.fillOval(x, y, 40, 40); 
+               
+
             }
         }
 
         private int[] FieldIdToCoords(int fieldId){
             int[] a=new int[2];
-            int anchorPointX=getWidth()/4-10;
-            int anchorPointY=getHeight()/4-10;
+            int anchorPointX=getWidth()/4-20;
+            int anchorPointY=getHeight()/4-20;
             a[0]=anchorPointX;
             a[1]=anchorPointY;
 

@@ -149,6 +149,10 @@ public class GameMap {
     public List<Detective> getDetectives(){
         return detectives;
     }
+
+    public MisterX getMisterX(){
+        return misterX;
+    }
     public List<Field> getAllFields(){
         return allFields;
     }
@@ -177,7 +181,7 @@ public class GameMap {
 
         if (move==null){
             System.out.println("Player"+currentPlayer.getId()+"has no moves");
-            Thread.sleep(1000);
+            Thread.sleep(500);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -187,7 +191,7 @@ public class GameMap {
         }else{
 
             System.out.println("Player"+currentPlayer.getId()+" "+move);
-            Thread.sleep(1000);
+            Thread.sleep(500);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
