@@ -6,6 +6,7 @@ public class GameManager {
 
     
     private GameMap gameMap;
+    private GameGUI gameGUI;
     
 
     public GameManager(){
@@ -18,12 +19,15 @@ public class GameManager {
         int total_rounds=0;
         long startTime = System.currentTimeMillis();
         boolean XPlayedByHuman=false;
+        gameGUI = new GameGUI();
         while(currentGame<gamesCount){
             this.gameMap=new GameMap(XPlayedByHuman);
+            gameGUI.drawPlayers(gameMap.getDetectives());
             if (XPlayedByHuman) gameMap.playerToString();
             
             while(gameMap.getGameState()==GameState.ONGOING){
                 gameMap.makeMove();
+                gameGUI.drawPlayers(gameMap.getDetectives());
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 detective_wins++;

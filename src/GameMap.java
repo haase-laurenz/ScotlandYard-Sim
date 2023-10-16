@@ -176,8 +176,8 @@ public class GameMap {
         Move move=currentPlayer.getMove(this);
 
         if (move==null){
-            //System.out.println("Player"+currentPlayer.getId()+"has no moves");
-            //Thread.sleep(100);
+            System.out.println("Player"+currentPlayer.getId()+"has no moves");
+            Thread.sleep(1000);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -186,8 +186,8 @@ public class GameMap {
             }
         }else{
 
-            //System.out.println("Player"+currentPlayer.getId()+" "+move);
-            //Thread.sleep(100);
+            System.out.println("Player"+currentPlayer.getId()+" "+move);
+            Thread.sleep(1000);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
