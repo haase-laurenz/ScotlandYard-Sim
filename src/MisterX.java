@@ -1,5 +1,4 @@
 import java.util.List;
-import java.lang.Math;
 import java.util.Scanner;
 
 public class MisterX extends Player {

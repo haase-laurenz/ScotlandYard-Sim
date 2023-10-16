@@ -1,5 +1,4 @@
 import java.util.List;
-import java.lang.Math;
 
 public class Detective extends Player{
 
