@@ -7,8 +7,8 @@
     ```bash
     java --version
     ```
-    If Java is not installed, you can download it from [Oracle's official website](https://www.oracle.com/java/).
-
+    If Java is not installed, you can download it from [Oracle's official website](https://www.oracle.com/de/java/technologies/downloads/#jdk21-windows).
+  
 ## How to Run
 
 1. **Compile the Code:**
