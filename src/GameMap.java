@@ -199,7 +199,7 @@ public class GameMap {
 
         if (move==null){
             //System.out.println("Player"+currentPlayer.getId()+"has no moves");
-            Thread.sleep(100);
+            //Thread.sleep(500);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -209,7 +209,7 @@ public class GameMap {
         }else{
 
             //System.out.println("Player"+currentPlayer.getId()+" "+move);
-            Thread.sleep(100);
+            //Thread.sleep(500);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
@@ -230,6 +230,18 @@ public class GameMap {
                     misterXCloud.clear();
                     misterXCloud.add(lastMisterXField);
                 }
+
+                List<Field> fieldsToRemove = new ArrayList<>();
+
+                for(Field field:misterXCloud){
+                    List<Integer> list=graph.get(field.getId()).get(move.getVehicleTyp().ordinal());
+                    if (list.isEmpty()){
+                       fieldsToRemove.add(field);
+                    }
+                    
+                }
+                misterXCloud.removeAll(fieldsToRemove);
+                
                 lastMisterXVehicleTypes.add(move.getVehicleTyp());
                 currentPlayer=detectives.get(0);
             }

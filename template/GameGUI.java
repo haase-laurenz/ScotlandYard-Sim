@@ -26,9 +26,9 @@ public class GameGUI {
         frame.setVisible(true);
     }
 
-    public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round) {
+    public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round,int currentGame,int detective_wins,int misterX_wins,int total_rounds) {
         // Hier rufe eine Methode auf dem GameMapPanel auf, um die Spieler zu zeichnen
-        gameMapPanel.drawPlayers(detectives,misterX,lastMisterXField,misterXVehicleTypes,misterXCloud,round);
+        gameMapPanel.drawPlayers(detectives,misterX,lastMisterXField,misterXVehicleTypes,misterXCloud,round,currentGame,detective_wins,misterX_wins,total_rounds);
     }
 
     // Neues Panel für das Spielbrett
@@ -40,18 +40,28 @@ public class GameGUI {
         private List<VehicleType> misterXVehicleTypes;
         private Set<Field> misterXCloud;
         private int round;
+        private int currentGame=0;
+        private int detective_wins=0;
+        private int misterX_wins=0;
+        private int total_rounds=0;
+        
 
         public GameMapPanel(ImageIcon mapImage) {
             this.mapImage = mapImage;
         }
 
-        public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round) {
+        public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round,int currentGame,int detective_wins,int misterX_wins,int total_rounds) {
             this.detectives = detectives;
             this.misterX=misterX;
             this.lastMisterXField=lastMisterXField;
             this.misterXVehicleTypes=misterXVehicleTypes;
             this.misterXCloud=misterXCloud;
             this.round=round;
+            this.currentGame=currentGame;
+            this.detective_wins=detective_wins;
+            this.misterX_wins=misterX_wins;
+            this.total_rounds=total_rounds;
+            
             repaint(); // Löst die Neuzeichnung des Panels aus
         }
 
@@ -63,7 +73,25 @@ public class GameGUI {
             if (mapImage != null) {
                 g.drawImage(mapImage.getImage(), getWidth()/4, getHeight()/4, 760, 570, this);
             }
+            /*
+            if (misterXCloud != null && !misterXCloud.isEmpty()) {
+                int cloudSize = misterXCloud.size();
+                int[] cloudXPoints = new int[cloudSize];
+                int[] cloudYPoints = new int[cloudSize];
+    
+                int cloudIndex = 0;
+                for (Field cloudField : misterXCloud) {
+                    int[] cloudCoords = FieldIdToCoords(cloudField.getId());
+                    cloudXPoints[cloudIndex] = cloudCoords[0];
+                    cloudYPoints[cloudIndex] = cloudCoords[1];
+                    cloudIndex++;
+                }
+                Color transparentColor = new Color(Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 200); // 128 steht für die Transparenz (0-255)
+                g.setColor(transparentColor);
+                g.fillPolygon(cloudXPoints, cloudYPoints, cloudSize);
+            }
 
+            */
             // Zeichne die Spieler als Kreise
             if (detectives != null && detectives.size()>0) {
                 Color[] colors=new Color[5];
@@ -107,7 +135,12 @@ public class GameGUI {
             for(int i=0;i<misterXVehicleTypes.size();i++){
                 g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 100, 100+10*i);
             }
-            
+
+            double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
+            g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      ",getWidth()/4,850                  
+            ) ;
+
         }
 
         private int[] FieldIdToCoords(int fieldId){

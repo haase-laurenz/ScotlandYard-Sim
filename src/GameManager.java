@@ -17,6 +17,7 @@ public class GameManager {
     
 
     public GameManager(){
+        gameGUI = new GameGUI();
     }
     
     public void playGames(int gamesCount) throws FileNotFoundException, IOException,InterruptedException {
@@ -27,16 +28,17 @@ public class GameManager {
         XPlayedByHuman=false;
         long startTime = System.currentTimeMillis();
         
-        gameGUI = new GameGUI();
+        
         while(currentGame<gamesCount){
+            currentGame++;
             this.gameMap=new GameMap(XPlayedByHuman);
-            gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds());
+            gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
             if (XPlayedByHuman) gameMap.playerToString();
             
             while(gameMap.getGameState()==GameState.ONGOING){
                 
                 gameMap.makeMove();
-                gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds());
+                gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 detective_wins++;
@@ -53,10 +55,11 @@ public class GameManager {
                                     schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      "                  
                 ) ;
             }
-            currentGame++;
+            
         }
         System.out.println("");
         long endTime = System.currentTimeMillis();
+        gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
         System.out.println("Runtime: " + (endTime - startTime) + " Millisekunden");
 
     }
