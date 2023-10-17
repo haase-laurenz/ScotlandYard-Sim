@@ -22,12 +22,12 @@ public class GameManager {
         gameGUI = new GameGUI();
         while(currentGame<gamesCount){
             this.gameMap=new GameMap(XPlayedByHuman);
-            gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX());
+            //gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX());
             if (XPlayedByHuman) gameMap.playerToString();
             
             while(gameMap.getGameState()==GameState.ONGOING){
                 gameMap.makeMove();
-                gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX());
+                //gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX());
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 detective_wins++;

@@ -180,8 +180,8 @@ public class GameMap {
         Move move=currentPlayer.getMove(this);
 
         if (move==null){
-            System.out.println("Player"+currentPlayer.getId()+"has no moves");
-            Thread.sleep(500);
+            //System.out.println("Player"+currentPlayer.getId()+"has no moves");
+            //Thread.sleep(500);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -190,8 +190,61 @@ public class GameMap {
             }
         }else{
 
-            System.out.println("Player"+currentPlayer.getId()+" "+move);
-            Thread.sleep(500);
+            //System.out.println("Player"+currentPlayer.getId()+" "+move);
+            //Thread.sleep(500);
+            currentPlayer.setCurrentField(move.getTargetField());
+
+
+            if (detectives.contains(currentPlayer)){
+                int index=detectives.indexOf(currentPlayer);
+                currentPlayer= (index<3)? detectives.get(index+1) : misterX;
+                if (index<3){
+                    currentPlayer=detectives.get(index+1);
+                }else{
+                    currentPlayer=misterX;
+                    round++;
+                }
+
+            }else{
+                if (round==2 || round==7 || round==12 || round==17 || round==23){
+                    lastMisterXField=currentPlayer.getCurrentField();
+                }
+                
+                currentPlayer=detectives.get(0);
+            }
+
+            if (round==30){
+                gameState=GameState.MISTERX_WIN;  
+            }
+
+            for(Player player:detectives){
+                if (player.getCurrentField()==misterX.getCurrentField()){
+                    gameState=GameState.DETECTIVES_WIN;
+                }
+            }
+
+        }
+    }
+
+    public void makeMove(Move move) throws InterruptedException {
+
+        if (twoPlayersSameField()){
+            throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
+        }
+
+        if (move==null){
+            //System.out.println("Player"+currentPlayer.getId()+"has no moves");
+            //Thread.sleep(500);
+            if (detectives.contains(currentPlayer)){
+                int index=detectives.indexOf(currentPlayer);
+                currentPlayer= (index<3)? detectives.get(index+1) : misterX;
+            }else{
+                gameState=GameState.DETECTIVES_WIN;
+            }
+        }else{
+
+            //System.out.println("Player"+currentPlayer.getId()+" "+move);
+            //Thread.sleep(500);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
