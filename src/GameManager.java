@@ -1,5 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 
 public class GameManager {
@@ -7,27 +9,34 @@ public class GameManager {
     
     private GameMap gameMap;
     private GameGUI gameGUI;
+    private int currentGame=0;
+    private int detective_wins=0;
+    private int misterX_wins=0;
+    private int total_rounds=0;
+    private boolean XPlayedByHuman=false;
     
 
     public GameManager(){
     }
     
     public void playGames(int gamesCount) throws FileNotFoundException, IOException,InterruptedException {
-        int currentGame=0;
-        int detective_wins=0;
-        int misterX_wins=0;
-        int total_rounds=0;
+        currentGame=0;
+        detective_wins=0;
+        misterX_wins=0;
+        total_rounds=0;
+        XPlayedByHuman=false;
         long startTime = System.currentTimeMillis();
-        boolean XPlayedByHuman=false;
+        
         gameGUI = new GameGUI();
         while(currentGame<gamesCount){
             this.gameMap=new GameMap(XPlayedByHuman);
-            //gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX());
+            gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds());
             if (XPlayedByHuman) gameMap.playerToString();
             
             while(gameMap.getGameState()==GameState.ONGOING){
+                
                 gameMap.makeMove();
-                //gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX());
+                gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds());
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 detective_wins++;

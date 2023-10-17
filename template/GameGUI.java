@@ -1,9 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public class GameGUI {
 
@@ -24,13 +22,13 @@ public class GameGUI {
         gameMapPanel = new GameMapPanel(mapImage); // Neues Panel für das Spielbrett
         frame.getContentPane().add(gameMapPanel, BorderLayout.CENTER);
 
-        frame.setSize(800, 600);
+        frame.setSize(1900, 1000);
         frame.setVisible(true);
     }
 
-    public void drawPlayers(List<Detective> detectives,MisterX misterX) {
+    public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round) {
         // Hier rufe eine Methode auf dem GameMapPanel auf, um die Spieler zu zeichnen
-        gameMapPanel.drawPlayers(detectives,misterX);
+        gameMapPanel.drawPlayers(detectives,misterX,lastMisterXField,misterXVehicleTypes,misterXCloud,round);
     }
 
     // Neues Panel für das Spielbrett
@@ -38,19 +36,27 @@ public class GameGUI {
         private ImageIcon mapImage;
         private List<Detective> detectives;
         private MisterX misterX;
+        private Field lastMisterXField;
+        private List<VehicleType> misterXVehicleTypes;
+        private Set<Field> misterXCloud;
+        private int round;
 
         public GameMapPanel(ImageIcon mapImage) {
             this.mapImage = mapImage;
         }
 
-        public void drawPlayers(List<Detective> detectives,MisterX misterX) {
+        public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round) {
             this.detectives = detectives;
             this.misterX=misterX;
+            this.lastMisterXField=lastMisterXField;
+            this.misterXVehicleTypes=misterXVehicleTypes;
+            this.misterXCloud=misterXCloud;
+            this.round=round;
             repaint(); // Löst die Neuzeichnung des Panels aus
         }
 
         @Override
-        protected void paintComponent(Graphics g) {
+        protected void paintComponent(Graphics g){
             super.paintComponent(g);
 
             // Zeichne das Bild
@@ -59,7 +65,7 @@ public class GameGUI {
             }
 
             // Zeichne die Spieler als Kreise
-            if (detectives != null) {
+            if (detectives != null && detectives.size()>0) {
                 Color[] colors=new Color[5];
                 colors[0]=Color.RED;
                 colors[1]=Color.BLUE;
@@ -67,7 +73,7 @@ public class GameGUI {
                 colors[3]=Color.YELLOW;
                 colors[4]=Color.BLACK;
                 for (Detective detective : detectives) {
-                    int index=detectives.indexOf(detective);
+                    int index=Math.max(detectives.indexOf(detective),0);
                     int[] coords=FieldIdToCoords(detective.getCurrentField().getId());
                     int x = coords[0]; // Du musst die tatsächlichen Koordinaten deiner Spieler verwenden
                     int y = coords[1];
@@ -85,10 +91,23 @@ public class GameGUI {
                 int y = coords[1];
                 Color transparentColor = new Color(colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue(), 200); // 128 steht für die Transparenz (0-255)
                 g.setColor(transparentColor);
-                g.fillOval(x, y, 40, 40); 
-               
+                g.fillOval(x, y, 40, 40);  
 
             }
+
+            g.setColor(Color.BLACK);
+            g.drawString("Round "+(round+1), getWidth()/4,100);
+            
+            if (lastMisterXField==null){
+                g.drawString("Last MisterX Field: versteckt", getWidth()/2, 100);
+            }else{
+                g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 100);
+            }
+
+            for(int i=0;i<misterXVehicleTypes.size();i++){
+                g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 100, 100+10*i);
+            }
+            
         }
 
         private int[] FieldIdToCoords(int fieldId){

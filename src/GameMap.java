@@ -28,7 +28,10 @@ public class GameMap {
     private Player currentPlayer;
 
     private Field lastMisterXField=null;
-    private List<Field> misterXPossibleFields=new ArrayList<>();
+    private List<VehicleType> lastMisterXVehicleTypes=new ArrayList<>();
+    private Set<Field> misterXCloud=new HashSet<>();
+
+
 
     private boolean misterXPlayedByHuman;
     
@@ -160,6 +163,10 @@ public class GameMap {
         return round;
     }
 
+    public Set<Field> getMisterXCloud(){
+        return misterXCloud;
+    }
+
     public GameState getGameState(){
         return gameState;
     }
@@ -179,9 +186,20 @@ public class GameMap {
         }
         Move move=currentPlayer.getMove(this);
 
+        if (currentPlayer==misterX && lastMisterXField!=null){
+            List<Move> misterXMoves=this.getLegalMoves(currentPlayer,false);
+            for(Move mv:misterXMoves){
+                if (move.getVehicleTyp()==mv.getVehicleTyp() || move.getVehicleTyp()==VehicleType.BLACK_TICKET){
+                    misterXCloud.add(mv.getTargetField());
+                }
+            }
+        }
+
+        
+
         if (move==null){
             //System.out.println("Player"+currentPlayer.getId()+"has no moves");
-            //Thread.sleep(500);
+            Thread.sleep(100);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -191,7 +209,7 @@ public class GameMap {
         }else{
 
             //System.out.println("Player"+currentPlayer.getId()+" "+move);
-            //Thread.sleep(500);
+            Thread.sleep(100);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
@@ -207,9 +225,12 @@ public class GameMap {
 
             }else{
                 if (round==2 || round==7 || round==12 || round==17 || round==23){
+                    //System.out.println("MisterX wird aufgedeckt an: "+currentPlayer.getCurrentField().getId());
                     lastMisterXField=currentPlayer.getCurrentField();
+                    misterXCloud.clear();
+                    misterXCloud.add(lastMisterXField);
                 }
-                
+                lastMisterXVehicleTypes.add(move.getVehicleTyp());
                 currentPlayer=detectives.get(0);
             }
 
@@ -262,7 +283,7 @@ public class GameMap {
                 if (round==2 || round==7 || round==12 || round==17 || round==23){
                     lastMisterXField=currentPlayer.getCurrentField();
                 }
-                
+                lastMisterXVehicleTypes.add(move.getVehicleTyp());
                 currentPlayer=detectives.get(0);
             }
 
@@ -280,6 +301,10 @@ public class GameMap {
 
         
 
+    }
+
+    public List<VehicleType> getLastMisterXVehicleTypes(){
+        return lastMisterXVehicleTypes;
     }
 
     public boolean undoMove(Move move){

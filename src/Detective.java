@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Detective extends Player{
@@ -13,17 +14,26 @@ public class Detective extends Player{
         if (myMoves.size()==0) return null;
         
         int bestScore=1000;
-        Move bestMove=null;
-
-        for (Move move:myMoves){
-            int score=gameMap.distanceBetween(move.getTargetField(), gameMap.getLastMisterXField());
-            if (score<bestScore){
-                bestScore=score;
-                bestMove=move;
+        Move bestMove=myMoves.get(0);
+        
+        if (gameMap.getMisterXCloud().size()>0){
+            for (Move move:myMoves){
+                int minDist=1000;
+                for(Field field:gameMap.getMisterXCloud()){
+                    int distance=gameMap.distanceBetween(move.getTargetField(), field);
+                    if (distance<minDist){
+                        minDist=distance;
+                    }
+                }
+                if (minDist<bestScore){
+                    bestScore=minDist;
+                    bestMove=move;
+                }
             }
         }
 
         return bestMove;
     }
+
 
 }
