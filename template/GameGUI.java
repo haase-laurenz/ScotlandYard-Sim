@@ -192,10 +192,10 @@ public class GameGUI {
                 }
 
                 for(int i=0;i<misterXVehicleTypes.size();i++){
-                    g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 200, 100+15*i);
+                    g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 200, getHeight()/2-285+15*i);
                 }
 
-                double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
+                double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
                 if (currentGame==1){
                     g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
                                     schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,775                  
