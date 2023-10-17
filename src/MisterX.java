@@ -50,7 +50,7 @@ public class MisterX extends Player {
             for (Move move:myMoves){
                 int minDist=Integer.MAX_VALUE;
                 for (Detective detective:gameMap.getDetectives()){
-                    int dist=gameMap.distanceBetween(move.getTargetField(),detective.getCurrentField());
+                    int dist=gameMap.distanceBetween(move.getTargetField(),detective.getCurrentField(),false);
                     if (dist<minDist){
                         minDist=dist;
                     }

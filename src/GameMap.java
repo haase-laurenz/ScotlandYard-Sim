@@ -179,7 +179,7 @@ public class GameMap {
         return lastMisterXField;
     }
 
-    public void makeMove() throws InterruptedException {
+    public void makeMove(int moveTime) throws InterruptedException {
 
         if (twoPlayersSameField()){
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
@@ -199,7 +199,7 @@ public class GameMap {
 
         if (move==null){
             //System.out.println("Player"+currentPlayer.getId()+"has no moves");
-            Thread.sleep(100);
+            Thread.sleep(moveTime);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -209,7 +209,7 @@ public class GameMap {
         }else{
 
             //System.out.println("Player"+currentPlayer.getId()+" "+move);
-            Thread.sleep(100);
+            Thread.sleep(moveTime);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
@@ -339,7 +339,7 @@ public class GameMap {
         return false;
     }
 
-    public int distanceBetween(Field f1,Field f2){
+    public int distanceBetween(Field f1,Field f2,boolean isDetective){
         
 
         // Verwende eine Queue, um die Felder zu durchlaufen
@@ -367,6 +367,7 @@ public class GameMap {
                 // Durchlaufe alle Nachbarfelder des aktuellen Feldes
                 int key=currentField.getId();
                 for(List<Integer> transports:graph.get(key)){
+                    if (VehicleType.values()[graph.get(key).indexOf(transports)]!=VehicleType.SHIP || !isDetective )
                     for(Integer endPoint:transports){
                         if (!visited.contains(allFields.get(endPoint-1))) {
                             queue.add(allFields.get(endPoint-1));

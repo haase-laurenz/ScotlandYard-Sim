@@ -14,12 +14,32 @@ public class GameGUI {
     private GameManager gameManager;
     private boolean running;
     private SwingWorker<Void, Void> worker;
+    private int moveTime=500; //in milliseconds
 
     public GameGUI(GameManager gameManager)  {
         frame = new JFrame("Scotland Yard Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        frame.setLayout(null); // Deaktiviere das Layout-Management
+
+        // Füge ein Textfeld zum Ändern von moveTime hinzu
+        JTextField moveTimeField = new JTextField(Integer.toString(moveTime));
+        moveTimeField.setColumns(5);
+        moveTimeField.setBounds(850, 30, 50, 50); // x, y, breite, höhe
+        JButton setMoveTimeButton = new JButton("Set Move Time");
+        setMoveTimeButton.setBounds(950, 30, 200, 50); // x, y, breite, höhe
+        setMoveTimeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    moveTime = Integer.parseInt(moveTimeField.getText());
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
         JButton startButton=new JButton("Start/End Game");
-        
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -35,7 +55,7 @@ public class GameGUI {
                         protected Void doInBackground() throws Exception {
                             running = true;
                             try {
-                                gameManager.playGames(1000);
+                                gameManager.playGames(1000,moveTime);
                             } catch (IOException | InterruptedException e1) {
                                 e1.printStackTrace();
                             }
@@ -50,6 +70,9 @@ public class GameGUI {
 
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(startButton, BorderLayout.NORTH);
+        frame.add(moveTimeField);
+        frame.add(setMoveTimeButton);
+        
 
         // Hier füge das Bild (JLabel) ein
         ImageIcon mapImage = new ImageIcon("template/scot_yard.png");
@@ -107,7 +130,7 @@ public class GameGUI {
 
             // Zeichne das Bild
             if (mapImage != null) {
-                g.drawImage(mapImage.getImage(), getWidth()/4, getHeight()/4, 760, 570, this);
+                g.drawImage(mapImage.getImage(), getWidth()/2-380, getHeight()/2-285, 760, 570, this);
             }
             /*
             if (misterXCloud != null && !misterXCloud.isEmpty()) {
@@ -148,7 +171,7 @@ public class GameGUI {
 
                     String fieldIdText = "Detective" +detective.getId()+" steht auf dem Feld "+ detective.getCurrentField().getId();
                     g.setColor(Color.BLACK);
-                    g.drawString(fieldIdText, 1300,getHeight()/2+20*index); // Just ein Beispiel, passe die Positionierung nach Bedarf an
+                    g.drawString(fieldIdText, 1400,getHeight()/2+20*index); // Just ein Beispiel, passe die Positionierung nach Bedarf an
                 }
                 int[] coords=FieldIdToCoords(misterX.getCurrentField().getId());
                 int x = coords[0];
@@ -160,22 +183,29 @@ public class GameGUI {
             }
             if (misterXVehicleTypes!=null){
                 g.setColor(Color.BLACK);
-                g.drawString("Round "+(round+1), getWidth()/4,100);
+                g.drawString("Round "+(round+1), getWidth()/2-380,175);
                 
                 if (lastMisterXField==null){
-                    g.drawString("Last MisterX Field: versteckt", getWidth()/2, 100);
+                    g.drawString("Last MisterX Field: versteckt", getWidth()/2, 175);
                 }else{
-                    g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 100);
+                    g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 175);
                 }
 
                 for(int i=0;i<misterXVehicleTypes.size();i++){
-                    g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 100, 100+10*i);
+                    g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 200, 100+15*i);
                 }
 
                 double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
-                g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                    schnitt+"% |--------| "+total_rounds/(currentGame)+" Rounds per Game      ",getWidth()/4,850                  
+                if (currentGame==1){
+                    g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                    schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,775                  
                 ) ;
+                }else{
+                    g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                    schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,775                  
+                ) ;
+                }
+                
             }
             
 
@@ -183,8 +213,8 @@ public class GameGUI {
 
         private int[] FieldIdToCoords(int fieldId){
             int[] a=new int[2];
-            int anchorPointX=getWidth()/4-20;
-            int anchorPointY=getHeight()/4-20;
+            int anchorPointX=getWidth()/2-380-20;
+            int anchorPointY=getHeight()/2-285-20;
             a[0]=anchorPointX;
             a[1]=anchorPointY;
 

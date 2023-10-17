@@ -19,7 +19,7 @@ public class Detective extends Player{
             for (Move move:myMoves){
                 int minDist=1000;
                 for(Field field:gameMap.getMisterXCloud()){
-                    int distance=gameMap.distanceBetween(move.getTargetField(), field);
+                    int distance=gameMap.distanceBetween(move.getTargetField(), field,true);
                     if (distance<minDist){
                         minDist=distance;
                     }

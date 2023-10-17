@@ -20,7 +20,7 @@ public class GameManager {
         gameGUI = new GameGUI(this);
     }
     
-    public void playGames(int gamesCount) throws FileNotFoundException, IOException,InterruptedException {
+    public void playGames(int gamesCount,int moveTime) throws FileNotFoundException, IOException,InterruptedException {
         currentGame=0;
         detective_wins=0;
         misterX_wins=0;
@@ -37,7 +37,7 @@ public class GameManager {
             
             while(gameMap.getGameState()==GameState.ONGOING){
                 
-                gameMap.makeMove();
+                gameMap.makeMove(moveTime);
                 gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
