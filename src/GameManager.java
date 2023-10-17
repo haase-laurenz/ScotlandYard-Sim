@@ -50,7 +50,7 @@ public class GameManager {
             }else{
                 misterX_wins++;
                 total_rounds+=gameMap.getRounds();
-                double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
+                double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
                 System.out.print("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
                                     schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      "                  
                 ) ;
