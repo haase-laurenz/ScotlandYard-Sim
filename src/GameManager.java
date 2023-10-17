@@ -17,7 +17,7 @@ public class GameManager {
     
 
     public GameManager(){
-        gameGUI = new GameGUI();
+        gameGUI = new GameGUI(this);
     }
     
     public void playGames(int gamesCount) throws FileNotFoundException, IOException,InterruptedException {
@@ -45,7 +45,7 @@ public class GameManager {
                 total_rounds+=gameMap.getRounds();
                 double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
                 System.out.print("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                    schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      "                  
+                                    schnitt+"% |--------| "+total_rounds/(currentGame)+" Rounds per Game      "                  
                 ) ;
             }else{
                 misterX_wins++;

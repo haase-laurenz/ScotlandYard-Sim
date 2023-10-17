@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -43,6 +44,7 @@ public class MisterX extends Player {
 
 
             double bestScore=-1000;
+            List<Move> bestMoves=new ArrayList<>();
             Move bestMove=null;
 
             for (Move move:myMoves){
@@ -53,14 +55,23 @@ public class MisterX extends Player {
                         minDist=dist;
                     }
                 }
+                if (minDist>=bestScore){
+                    bestMoves.add(move);
+                }
+
                 if (minDist>bestScore){
+                    bestMoves.clear();
+                    bestMoves.add(move);
                     bestScore=minDist;
-                    bestMove=move;
                 }
 
             }
-
-            return bestMove;
+            for (Move move:bestMoves){
+                System.out.println(move.toString());
+            }
+            System.out.println("");
+            int zufall=(int)(Math.random() * ((bestMoves.size()-1) + 1));
+            return bestMoves.get(zufall);
 
         }
         

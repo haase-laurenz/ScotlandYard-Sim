@@ -2,17 +2,51 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.Set;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class GameGUI {
 
     private JFrame frame;
     private GameMapPanel gameMapPanel; // Neues Panel für das Spielbrett
+    private GameManager gameManager;
+    private boolean running;
+    private SwingWorker<Void, Void> worker;
 
-    public GameGUI() {
+    public GameGUI(GameManager gameManager)  {
         frame = new JFrame("Scotland Yard Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JButton startButton=new JButton("Start/End Game");
+        
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(running){
+                    running = false;
+                    if (worker != null) {
+                        worker.cancel(true); // Abbruchsignal senden
+                        worker = null; // Worker-Referenz zurücksetzen
+                    }
+                }else{
+                    worker = new SwingWorker<Void, Void>() {
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            running = true;
+                            try {
+                                gameManager.playGames(1000);
+                            } catch (IOException | InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            return null;
+                        }
+                    };
 
-        JButton startButton = new JButton("Start Game");
+                    worker.execute();
+                }
+            }
+        });
 
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(startButton, BorderLayout.NORTH);
@@ -28,7 +62,10 @@ public class GameGUI {
 
     public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round,int currentGame,int detective_wins,int misterX_wins,int total_rounds) {
         // Hier rufe eine Methode auf dem GameMapPanel auf, um die Spieler zu zeichnen
-        gameMapPanel.drawPlayers(detectives,misterX,lastMisterXField,misterXVehicleTypes,misterXCloud,round,currentGame,detective_wins,misterX_wins,total_rounds);
+        //gameMapPanel.drawPlayers(detectives,misterX,lastMisterXField,misterXVehicleTypes,misterXCloud,round,currentGame,detective_wins,misterX_wins,total_rounds);
+        SwingUtilities.invokeLater(() -> {
+            gameMapPanel.drawPlayers(detectives, misterX, lastMisterXField, misterXVehicleTypes, misterXCloud, round, currentGame, detective_wins, misterX_wins, total_rounds);
+        });
     }
 
     // Neues Panel für das Spielbrett
@@ -61,7 +98,6 @@ public class GameGUI {
             this.detective_wins=detective_wins;
             this.misterX_wins=misterX_wins;
             this.total_rounds=total_rounds;
-            
             repaint(); // Löst die Neuzeichnung des Panels aus
         }
 
@@ -122,24 +158,26 @@ public class GameGUI {
                 g.fillOval(x, y, 40, 40);  
 
             }
+            if (misterXVehicleTypes!=null){
+                g.setColor(Color.BLACK);
+                g.drawString("Round "+(round+1), getWidth()/4,100);
+                
+                if (lastMisterXField==null){
+                    g.drawString("Last MisterX Field: versteckt", getWidth()/2, 100);
+                }else{
+                    g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 100);
+                }
 
-            g.setColor(Color.BLACK);
-            g.drawString("Round "+(round+1), getWidth()/4,100);
+                for(int i=0;i<misterXVehicleTypes.size();i++){
+                    g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 100, 100+10*i);
+                }
+
+                double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
+                g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                    schnitt+"% |--------| "+total_rounds/(currentGame)+" Rounds per Game      ",getWidth()/4,850                  
+                ) ;
+            }
             
-            if (lastMisterXField==null){
-                g.drawString("Last MisterX Field: versteckt", getWidth()/2, 100);
-            }else{
-                g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 100);
-            }
-
-            for(int i=0;i<misterXVehicleTypes.size();i++){
-                g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 100, 100+10*i);
-            }
-
-            double schnitt=Math.round((double)misterX_wins/(misterX_wins+detective_wins)*10000)/100;
-            g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      ",getWidth()/4,850                  
-            ) ;
 
         }
 
