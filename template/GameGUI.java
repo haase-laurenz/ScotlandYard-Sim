@@ -79,7 +79,7 @@ public class GameGUI {
         gameMapPanel = new GameMapPanel(mapImage); // Neues Panel für das Spielbrett
         frame.getContentPane().add(gameMapPanel, BorderLayout.CENTER);
 
-        frame.setSize(1900, 1000);
+        frame.setSize(1920, 1200);
         frame.setVisible(true);
     }
 
@@ -198,11 +198,11 @@ public class GameGUI {
                 double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
                 if (currentGame==1){
                     g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                    schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,775                  
+                                    schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,975                  
                 ) ;
                 }else{
                     g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                    schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,775                  
+                                    schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,975                  
                 ) ;
                 }
                 

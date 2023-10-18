@@ -66,10 +66,6 @@ public class MisterX extends Player {
                 }
 
             }
-            for (Move move:bestMoves){
-                System.out.println(move.toString());
-            }
-            System.out.println("");
             int zufall=(int)(Math.random() * ((bestMoves.size()-1) + 1));
             return bestMoves.get(zufall);
 
