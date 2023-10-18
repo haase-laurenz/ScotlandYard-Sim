@@ -1,7 +1,7 @@
 # ScotlandYard-Sim
-
+ 
 ## Requirements
-
+[Dokumentation](Dokumentation.md)
 - **Java Installation:**
   - Ensure that you have Java installed on your system. You can check this by running the following command in your command prompt or terminal:
     ```bash
