@@ -1,4 +1,4 @@
-public class Field {
+public class Field{
     private int id;
     private boolean occupied;
     private int HeatMapCount=0;

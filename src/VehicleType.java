@@ -4,4 +4,5 @@ public enum VehicleType {
     TRAIN,
     SHIP,
     BLACK_TICKET
+    
 }

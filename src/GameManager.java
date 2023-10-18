@@ -23,7 +23,7 @@ public class GameManager {
         gameGUI = new GameGUI(this);
     }
     
-    public void playGames(int gamesCount,int moveTime) throws FileNotFoundException, IOException,InterruptedException {
+    public void playGames(int gamesCount,int moveTime) throws FileNotFoundException, IOException,InterruptedException,CloneNotSupportedException {
         currentGame=0;
         detective_wins=0;
         misterX_wins=0;

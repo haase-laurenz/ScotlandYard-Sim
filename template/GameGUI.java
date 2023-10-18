@@ -243,6 +243,17 @@ public class GameGUI {
                     g.fillOval(hm_x, hm_y, 40, 40);
                     g.setColor(Color.BLACK);
                 }
+
+                double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
+                if (currentGame==1){
+                        g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                        schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,975                  
+                    ) ;
+                    }else{
+                        g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                        schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,975                  
+                    ) ;
+                    }
             }
 
         }

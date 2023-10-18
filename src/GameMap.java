@@ -11,7 +11,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.lang.Math;
 
-public class GameMap {
+public class GameMap{
 
 
 
@@ -40,7 +40,7 @@ public class GameMap {
 
 
 
-    public GameMap(boolean misterXPlayedByHuman) throws FileNotFoundException, IOException{
+    public GameMap(boolean misterXPlayedByHuman)throws FileNotFoundException, IOException{
         this.round=0;
         this.gameState=GameState.ONGOING;
         this.misterXPlayedByHuman=misterXPlayedByHuman;
@@ -49,6 +49,27 @@ public class GameMap {
         initializePlayers();
         
         
+    }
+
+    private GameMap(GameMap original) {
+        this.currentPlayer=new Player(original.getCurrentplayer().getId(),original.getCurrentplayer().getCurrentField(),false);
+        this.gameState=original.gameState;
+        this.detectives = new ArrayList<>();
+        for (Detective detective : original.getDetectives()) {
+            this.detectives.add(new Detective(detective.getId(), detective.getCurrentField(), false));
+        }
+        this.misterX=new MisterX(original.getMisterX().getId(),original.getMisterX().getCurrentField(),false);
+        if (original.getLastMisterXField()==null){
+            this.lastMisterXField = null;
+        }else{
+            this.lastMisterXField = new Field(original.getLastMisterXField().getId());
+        }
+        
+        this.lastMisterXVehicleTypes = new ArrayList<>();
+        for (VehicleType vt : original.getLastMisterXVehicleTypes()) {
+            this.lastMisterXVehicleTypes.add(vt);
+        }
+        this.round=original.getRounds();
     }
 
     private void initializeFields(){
@@ -179,13 +200,22 @@ public class GameMap {
         return lastMisterXField;
     }
 
-    public void makeMove(int moveTime) throws InterruptedException {
+    public void makeMove(int moveTime) throws InterruptedException{
 
         if (twoPlayersSameField()){
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
         }
+       
+        GameMap clone=new GameMap(this);
+       
         Move move=currentPlayer.getMove(this);
+        if (!equalGameMap(clone)) {
+            throw new IllegalStateException("!!!-ILLEGAL: CHANGED STATE OF THE BOARD-!!! in GameMap MakeMove()");
+        }
 
+        
+        
+        
         if (currentPlayer==misterX && lastMisterXField!=null){
             List<Move> misterXMoves=this.getLegalMoves(currentPlayer,false);
             for(Move mv:misterXMoves){
@@ -207,6 +237,11 @@ public class GameMap {
                 gameState=GameState.DETECTIVES_WIN;
             }
         }else{
+
+            if (move.getVehicleTyp()==null){
+                System.out.println("MAKE MOVE ERROR: VEHICLE-TYPE CANNOT BE NULL");
+                throw new IllegalArgumentException("VEHICLE-TYPE CANNOT BE NULL");
+            }
 
             //System.out.println("Player"+currentPlayer.getId()+" "+move);
             Thread.sleep(moveTime);
@@ -259,15 +294,13 @@ public class GameMap {
         }
     }
 
-    public void makeMove(Move move) throws InterruptedException {
+    public void makeMove(Move move){
 
         if (twoPlayersSameField()){
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
         }
 
         if (move==null){
-            //System.out.println("Player"+currentPlayer.getId()+"has no moves");
-            //Thread.sleep(500);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -276,8 +309,6 @@ public class GameMap {
             }
         }else{
 
-            //System.out.println("Player"+currentPlayer.getId()+" "+move);
-            //Thread.sleep(500);
             currentPlayer.setCurrentField(move.getTargetField());
 
 
@@ -319,8 +350,55 @@ public class GameMap {
         return lastMisterXVehicleTypes;
     }
 
-    public boolean undoMove(Move move){
-        return true;
+    public void undoMove(Move move){
+        if (twoPlayersSameField()){
+            throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
+        }
+
+        if (move==null){
+            if (detectives.contains(currentPlayer)){
+                int index=detectives.indexOf(currentPlayer);
+                currentPlayer= (index>0)? detectives.get(index-1) : misterX;
+            }else{
+                gameState=GameState.ONGOING;
+            }
+        }else{
+
+            if (move.getVehicleTyp()==null){
+                System.out.println("MAKE MOVE ERROR: VEHICLE-TYPE CANNOT BE NULL");
+                throw new IllegalArgumentException("VEHICLE-TYPE CANNOT BE NULL");
+            }
+
+            if (detectives.contains(currentPlayer)){
+                int index=detectives.indexOf(currentPlayer);
+                if (index>0){
+                    currentPlayer=detectives.get(index-1);
+                }else{
+                    currentPlayer=misterX;
+                    round--;
+                }
+
+            }else{
+                if (round==2 || round==7 || round==12 || round==17 || round==23){
+                    lastMisterXField=currentPlayer.getCurrentField();
+                }
+                lastMisterXVehicleTypes.removeLast();
+                currentPlayer=detectives.get(3);
+            }
+
+            if (round<30){
+                gameState=GameState.ONGOING;  
+            }
+
+            for(Player player:detectives){
+                if (player.getCurrentField()==misterX.getCurrentField()){
+                    gameState=GameState.ONGOING;
+                }
+            }
+
+            currentPlayer.setCurrentField(move.getTargetField());
+
+        }
     }
 
     private boolean twoPlayersSameField(){
@@ -382,17 +460,50 @@ public class GameMap {
         return distance;
     }
 
-    
+    protected boolean equalGameMap(GameMap clone){
 
+        boolean failed=false;
 
+        if (this.getCurrentplayer().getCurrentField().getId()!=clone.getCurrentplayer().getCurrentField().getId() || this.getCurrentplayer().getId()!=clone.getCurrentplayer().getId()){
+            System.out.println("EqualGameMap Test 1 failed: getMove changed CurrentPlayer");
+            failed=true;
+        }
 
+        if (clone.getGameState()!=null&&!this.gameState.equals(clone.getGameState())){
+            System.out.println("EqualGameMap Test 2 failed: getMove changed GameState");
+            failed=true;
+        }
 
+        
+        for (int i=0;i<4;i++){
+            if (clone.getDetectives().get(i).getCurrentField()!=this.getDetectives().get(i).getCurrentField() || clone.getDetectives().get(i).getId()!=this.getDetectives().get(i).getId()){
+                System.out.println("EqualGameMap Test 3 failed: getMove changed Detective "+i);
+                failed=true;
+            }
+        }
 
+        if (this.misterX.getCurrentField().getId()!=clone.getMisterX().getCurrentField().getId() || this.misterX.getId()!=clone.getMisterX().getId()){
+            System.out.println("EqualGameMap Test 4 failed: getMove changed MisterX");
+            failed=true;
+        }
+        
+        if ( (this.getLastMisterXField()!=null && this.getLastMisterXField()!=null)&&this.getLastMisterXField().getId()!=clone.getLastMisterXField().getId()){
+            System.out.println("EqualGameMap Test 5 failed: getMove changed lastMisterXField");
+            failed=true;
+        }
+        if (clone.getLastMisterXVehicleTypes().size()!=this.getLastMisterXVehicleTypes().size()){
+            System.out.println("EqualGameMap Test 6 failed: getMove changed lastMisterXVehicleTypes");
+            failed=true;
+        }
 
-
-
-
-
+        if (this.round!=clone.getRounds()){
+            System.out.println("EqualGameMap Test 7 failed: getMove changed Round counter");
+            failed=true;
+        }
+        
+        if (failed)return false;
+        return true;
+    }
 
     
     private  HashMap <Integer,List<List<Integer>>> loadGraphFromCSV() throws FileNotFoundException, IOException{
