@@ -26,6 +26,7 @@ public class Player {
         this.currentField.setOccupiedFalse();
         this.currentField=newField;
         this.currentField.setOccupiedTrue();
+        newField.raiseHeatMapCount();
     }
 
     public Move getMove(GameMap gameMap){

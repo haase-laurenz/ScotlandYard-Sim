@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.awt.event.ActionEvent;
@@ -17,6 +18,7 @@ public class GameGUI {
     private int moveTime=500; //in milliseconds
 
     public GameGUI(GameManager gameManager)  {
+        this.gameManager=gameManager;
         frame = new JFrame("Scotland Yard Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -55,7 +57,8 @@ public class GameGUI {
                         protected Void doInBackground() throws Exception {
                             running = true;
                             try {
-                                gameManager.playGames(1000,moveTime);
+                                gameManager.playGames(100,moveTime);
+                                running = false;
                             } catch (IOException | InterruptedException e1) {
                                 e1.printStackTrace();
                             }
@@ -91,6 +94,10 @@ public class GameGUI {
         });
     }
 
+    public void drawHeatMap(){
+        gameMapPanel.drawHeatMap();
+    }
+
     // Neues Panel für das Spielbrett
     private class GameMapPanel extends JPanel {
         private ImageIcon mapImage;
@@ -104,10 +111,17 @@ public class GameGUI {
         private int detective_wins=0;
         private int misterX_wins=0;
         private int total_rounds=0;
+
+        private boolean gameEnd=false;
         
 
         public GameMapPanel(ImageIcon mapImage) {
             this.mapImage = mapImage;
+        }
+
+        public void drawHeatMap(){
+            this.gameEnd=true;
+            repaint();
         }
 
         public void drawPlayers(List<Detective> detectives,MisterX misterX,Field lastMisterXField,List<VehicleType> misterXVehicleTypes,Set<Field> misterXCloud,int round,int currentGame,int detective_wins,int misterX_wins,int total_rounds) {
@@ -121,8 +135,12 @@ public class GameGUI {
             this.detective_wins=detective_wins;
             this.misterX_wins=misterX_wins;
             this.total_rounds=total_rounds;
+            this.gameEnd=false;
             repaint(); // Löst die Neuzeichnung des Panels aus
         }
+
+
+
 
         @Override
         protected void paintComponent(Graphics g){
@@ -132,82 +150,100 @@ public class GameGUI {
             if (mapImage != null) {
                 g.drawImage(mapImage.getImage(), getWidth()/2-380, getHeight()/2-285, 760, 570, this);
             }
-            /*
-            if (misterXCloud != null && !misterXCloud.isEmpty()) {
-                int cloudSize = misterXCloud.size();
-                int[] cloudXPoints = new int[cloudSize];
-                int[] cloudYPoints = new int[cloudSize];
-    
-                int cloudIndex = 0;
-                for (Field cloudField : misterXCloud) {
-                    int[] cloudCoords = FieldIdToCoords(cloudField.getId());
-                    cloudXPoints[cloudIndex] = cloudCoords[0];
-                    cloudYPoints[cloudIndex] = cloudCoords[1];
-                    cloudIndex++;
-                }
-                Color transparentColor = new Color(Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 200); // 128 steht für die Transparenz (0-255)
-                g.setColor(transparentColor);
-                g.fillPolygon(cloudXPoints, cloudYPoints, cloudSize);
-            }
 
-            */
-            // Zeichne die Spieler als Kreise
-            if (detectives != null && detectives.size()>0) {
-                Color[] colors=new Color[5];
-                colors[0]=Color.RED;
-                colors[1]=Color.BLUE;
-                colors[2]=Color.GREEN;
-                colors[3]=Color.YELLOW;
-                colors[4]=Color.BLACK;
-                for (Detective detective : detectives) {
-                    int index=Math.max(detectives.indexOf(detective),0);
-                    int[] coords=FieldIdToCoords(detective.getCurrentField().getId());
-                    int x = coords[0]; // Du musst die tatsächlichen Koordinaten deiner Spieler verwenden
-                    int y = coords[1];
-                    Color transparentColor = new Color(colors[index].getRed(), colors[index].getGreen(), colors[index].getBlue(), 200); // 128 steht für die Transparenz (0-255)
+            if (!gameEnd){
+                /*
+                if (misterXCloud != null && !misterXCloud.isEmpty()) {
+                    int cloudSize = misterXCloud.size();
+                    int[] cloudXPoints = new int[cloudSize];
+                    int[] cloudYPoints = new int[cloudSize];
+        
+                    int cloudIndex = 0;
+                    for (Field cloudField : misterXCloud) {
+                        int[] cloudCoords = FieldIdToCoords(cloudField.getId());
+                        cloudXPoints[cloudIndex] = cloudCoords[0];
+                        cloudYPoints[cloudIndex] = cloudCoords[1];
+                        cloudIndex++;
+                    }
+                    Color transparentColor = new Color(Color.GRAY.getRed(), Color.GRAY.getGreen(), Color.GRAY.getBlue(), 200); // 128 steht für die Transparenz (0-255)
                     g.setColor(transparentColor);
+                    g.fillPolygon(cloudXPoints, cloudYPoints, cloudSize);
+                }
 
-                    g.fillOval(x, y, 40, 40); 
+                */
+                // Zeichne die Spieler als Kreise
+                if (detectives != null && detectives.size()>0) {
+                    Color[] colors=new Color[5];
+                    colors[0]=Color.RED;
+                    colors[1]=Color.BLUE;
+                    colors[2]=Color.GREEN;
+                    colors[3]=Color.YELLOW;
+                    colors[4]=Color.BLACK;
+                    for (Detective detective : detectives) {
+                        int index=Math.max(detectives.indexOf(detective),0);
+                        int[] coords=FieldIdToCoords(detective.getCurrentField().getId());
+                        int x = coords[0]; // Du musst die tatsächlichen Koordinaten deiner Spieler verwenden
+                        int y = coords[1];
+                        Color transparentColor = new Color(colors[index].getRed(), colors[index].getGreen(), colors[index].getBlue(), 200); // 128 steht für die Transparenz (0-255)
+                        g.setColor(transparentColor);
 
-                    String fieldIdText = "Detective" +detective.getId()+" steht auf dem Feld "+ detective.getCurrentField().getId();
+                        g.fillOval(x, y, 40, 40); 
+
+                        String fieldIdText = "Detective" +detective.getId()+" steht auf dem Feld "+ detective.getCurrentField().getId();
+                        g.setColor(Color.BLACK);
+                        g.drawString(fieldIdText, 1400,getHeight()/2+20*index); // Just ein Beispiel, passe die Positionierung nach Bedarf an
+                    }
+                    int[] coords=FieldIdToCoords(misterX.getCurrentField().getId());
+                    int x = coords[0];
+                    int y = coords[1];
+                    Color transparentColor = new Color(colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue(), 200); // 128 steht für die Transparenz (0-255)
+                    g.setColor(transparentColor);
+                    g.fillOval(x, y, 40, 40);  
+
+                }
+                if (misterXVehicleTypes!=null){
                     g.setColor(Color.BLACK);
-                    g.drawString(fieldIdText, 1400,getHeight()/2+20*index); // Just ein Beispiel, passe die Positionierung nach Bedarf an
-                }
-                int[] coords=FieldIdToCoords(misterX.getCurrentField().getId());
-                int x = coords[0];
-                int y = coords[1];
-                Color transparentColor = new Color(colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue(), 200); // 128 steht für die Transparenz (0-255)
-                g.setColor(transparentColor);
-                g.fillOval(x, y, 40, 40);  
+                    g.drawString("Round "+(round+1), getWidth()/2-380,175);
+                    
+                    if (lastMisterXField==null){
+                        g.drawString("Last MisterX Field: versteckt", getWidth()/2, 175);
+                    }else{
+                        g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 175);
+                    }
 
+                    for(int i=0;i<misterXVehicleTypes.size();i++){
+                        g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 200, getHeight()/2-285+15*i);
+                    }
+
+                    double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
+                    if (currentGame==1){
+                        g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                        schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,975                  
+                    ) ;
+                    }else{
+                        g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
+                                        schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,975                  
+                    ) ;
+                    }
+                    
+                }
+            }else{
+                List<Integer> hm=gameManager.getHeatMap();
+                int maxValue = Collections.max(hm);
+                for(int i=0;i<hm.size();i++){
+                    int[] hm_coords=FieldIdToCoords(i+1);
+                    int hm_x = hm_coords[0];
+                    int hm_y = hm_coords[1];
+                    double scaledValue = Math.log(hm.get(i) + 1) / Math.log(maxValue + 1);
+                    int red = (int) (255 * scaledValue);
+                    int green = (int) (255 * (1 - scaledValue));
+
+                    Color transparentColor = new Color(red, green, 0, 240); // 128 steht für die Transparenz (0-255)
+                    g.setColor(transparentColor);
+                    g.fillOval(hm_x, hm_y, 40, 40);
+                    g.setColor(Color.BLACK);
+                }
             }
-            if (misterXVehicleTypes!=null){
-                g.setColor(Color.BLACK);
-                g.drawString("Round "+(round+1), getWidth()/2-380,175);
-                
-                if (lastMisterXField==null){
-                    g.drawString("Last MisterX Field: versteckt", getWidth()/2, 175);
-                }else{
-                    g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 175);
-                }
-
-                for(int i=0;i<misterXVehicleTypes.size();i++){
-                    g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 200, getHeight()/2-285+15*i);
-                }
-
-                double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
-                if (currentGame==1){
-                    g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                    schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,975                  
-                ) ;
-                }else{
-                    g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                    schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,975                  
-                ) ;
-                }
-                
-            }
-            
 
         }
 

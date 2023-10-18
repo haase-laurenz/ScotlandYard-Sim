@@ -1,6 +1,7 @@
 public class Field {
     private int id;
     private boolean occupied;
+    private int HeatMapCount=0;
 
     public Field(int id){
         this.id=id;
@@ -21,6 +22,14 @@ public class Field {
 
     public void setOccupiedFalse(){
         this.occupied=false;
+    }
+
+    public int getHeatMapCount(){
+        return HeatMapCount;
+    }
+
+    public void raiseHeatMapCount(){
+        this.HeatMapCount++;
     }
 
 }
