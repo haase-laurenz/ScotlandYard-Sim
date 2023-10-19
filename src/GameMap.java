@@ -27,10 +27,11 @@ public class GameMap{
     private MisterX misterX;
     private Player currentPlayer;
 
-    private Field lastMisterXField=null;
+    private List<Field> lastMisterXFields=new ArrayList<>();
+    
     private List<VehicleType> lastMisterXVehicleTypes=new ArrayList<>();
     private Set<Field> misterXCloud=new HashSet<>();
-    private List<Move> allMisterXMoves=new ArrayList<>();
+    
 
 
 
@@ -48,7 +49,7 @@ public class GameMap{
         this.graph=loadGraphFromCSV();
         initializeFields();
         initializePlayers();
-        
+        lastMisterXFields.add(null);
         
     }
 
@@ -60,11 +61,24 @@ public class GameMap{
             this.detectives.add(new Detective(detective.getId(), detective.getCurrentField(), false));
         }
         this.misterX=new MisterX(original.getMisterX().getId(),original.getMisterX().getCurrentField(),false);
-        if (original.getLastMisterXField()==null){
-            this.lastMisterXField = null;
+        
+        if (original.getLastMisterXFields().getLast()==null){
+            this.lastMisterXFields = new ArrayList<>();;
+            this.lastMisterXFields.add(null);
+            
+            
         }else{
-            this.lastMisterXField = new Field(original.getLastMisterXField().getId());
+            this.lastMisterXFields = new ArrayList<>();
+            for (Field lastField : original.getLastMisterXFields()) {
+                if (lastField==null){
+                    this.lastMisterXFields.add(null);
+                }else{
+                    this.lastMisterXFields.add(new Field(lastField.getId()));
+                }
+                
+            }
         }
+        
         
         this.lastMisterXVehicleTypes = new ArrayList<>();
         for (VehicleType vt : original.getLastMisterXVehicleTypes()) {
@@ -197,8 +211,8 @@ public class GameMap{
         return currentPlayer;
     }
 
-    public Field getLastMisterXField(){
-        return lastMisterXField;
+    public List<Field> getLastMisterXFields(){
+        return lastMisterXFields;
     }
 
     public List<VehicleType> getLastMisterXVehicleTypes(){
@@ -206,7 +220,6 @@ public class GameMap{
     }
 
     public void makeMove(int moveTime) throws InterruptedException{
-
         if (twoPlayersSameField()){
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
         }
@@ -221,7 +234,7 @@ public class GameMap{
         
         
         
-        if (currentPlayer==misterX && lastMisterXField!=null){
+        if (currentPlayer==misterX && lastMisterXFields.getLast()!=null){
             List<Move> misterXMoves=this.getLegalMoves(currentPlayer,false);
             for(Move mv:misterXMoves){
                 if (move.getVehicleTyp()==mv.getVehicleTyp() || move.getVehicleTyp()==VehicleType.BLACK_TICKET){
@@ -229,6 +242,8 @@ public class GameMap{
                 }
             }
         }
+
+       
 
         
 
@@ -242,7 +257,7 @@ public class GameMap{
                 gameState=GameState.DETECTIVES_WIN;
             }
         }else{
-
+            
             if (move.getVehicleTyp()==null){
                 System.out.println("MAKE MOVE ERROR: VEHICLE-TYPE CANNOT BE NULL");
                 throw new IllegalArgumentException("VEHICLE-TYPE CANNOT BE NULL");
@@ -266,9 +281,9 @@ public class GameMap{
             }else{
                 if (round==2 || round==7 || round==12 || round==17 || round==23){
                     //System.out.println("MisterX wird aufgedeckt an: "+currentPlayer.getCurrentField().getId());
-                    lastMisterXField=currentPlayer.getCurrentField();
+                    lastMisterXFields.add(currentPlayer.getCurrentField());
                     misterXCloud.clear();
-                    misterXCloud.add(lastMisterXField);
+                    misterXCloud.add(lastMisterXFields.getLast());
                 }
 
                 List<Field> fieldsToRemove = new ArrayList<>();
@@ -329,7 +344,7 @@ public class GameMap{
 
             }else{
                 if (round==2 || round==7 || round==12 || round==17 || round==23){
-                    lastMisterXField=currentPlayer.getCurrentField();
+                    lastMisterXFields.add(currentPlayer.getCurrentField());
                 }
                 lastMisterXVehicleTypes.add(move.getVehicleTyp());
                 currentPlayer=detectives.get(0);
@@ -378,10 +393,8 @@ public class GameMap{
                 }else{
                     lastMisterXVehicleTypes.removeLast();
                     currentPlayer=misterX;
-                    if (round==2){
-                        lastMisterXField=null;
-                    }else if(round==7 || round==12 || round==17 || round==23){
-                        lastMisterXField=currentPlayer.getCurrentField();
+                    if (round==2 || round==7 || round==12 || round==17 || round==23){
+                        lastMisterXFields.removeLast();
                     }
                     
                 }
@@ -496,12 +509,14 @@ public class GameMap{
             System.out.println("EqualGameMap Test 4 failed: getMove changed MisterX");
             failed=true;
         }
-        if ((this.getLastMisterXField() == null && clone.getLastMisterXField() != null) 
-            || (this.getLastMisterXField() != null 
-                && this.getLastMisterXField().getId()!=(clone.getLastMisterXField().getId()))) {
-            System.out.println("EqualGameMap Test 5 failed: getMove changed lastMisterXField: should be:"+clone.getLastMisterXField().getId()+" is:"+this.getLastMisterXField().getId());
+    
+        if ((this.getLastMisterXFields().getLast() == null && clone.getLastMisterXFields().getLast() != null) 
+            || (this.getLastMisterXFields().getLast() != null 
+                && this.getLastMisterXFields().getLast().getId()!=(clone.getLastMisterXFields().getLast().getId()))) {
+            System.out.println("EqualGameMap Test 5 failed: getMove changed lastMisterXField: should be:"+clone.getLastMisterXFields().getLast().getId()+" is:"+this.getLastMisterXFields().getLast().getId());
             failed = true;
         }
+ 
         if (clone.getLastMisterXVehicleTypes().size()!=this.getLastMisterXVehicleTypes().size()){
             System.out.println("EqualGameMap Test 6 failed: getMove changed lastMisterXVehicleTypes");
             failed=true;

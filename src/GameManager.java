@@ -36,13 +36,13 @@ public class GameManager {
         while(currentGame<gamesCount){
             currentGame++;
             this.gameMap=new GameMap(XPlayedByHuman);
-            gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
+            gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXFields().getLast(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
             if (XPlayedByHuman) gameMap.playerToString();
             
             while(gameMap.getGameState()==GameState.ONGOING){
                 
                 gameMap.makeMove(moveTime);
-                gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
+                gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXFields().getLast(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 detective_wins++;
@@ -70,7 +70,7 @@ public class GameManager {
         }
         System.out.println("");
         long endTime = System.currentTimeMillis();
-        gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXField(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
+        gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXFields().getLast(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
         System.out.println("Runtime: " + (endTime - startTime) + " Millisekunden");
 
         gameGUI.drawHeatMap();

@@ -32,8 +32,8 @@ public class Detective extends Player{
         }
 
         Move move= new Move(this.getCurrentField(), new Field(32), VehicleType.SHIP);
-        gameMap.makeMove(move);
-        gameMap.undoMove(move);
+        //gameMap.makeMove(move);
+        //gameMap.undoMove(move);
 
         return bestMove;
     }

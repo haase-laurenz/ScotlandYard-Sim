@@ -34,7 +34,7 @@ public class MisterX extends Player {
                 }
             }
             
-            return new Move(this.getCurrentField(), entered_Move.getTargetField(), null);
+            return new Move(this.getCurrentField(), entered_Move.getTargetField(), VehicleType.TAXI);
             
 
         }else{
