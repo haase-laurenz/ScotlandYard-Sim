@@ -54,13 +54,13 @@ public class GameMap{
     }
 
     private GameMap(GameMap original) {
-        this.currentPlayer=new Player(original.getCurrentplayer().getId(),original.getCurrentplayer().getCurrentField(),false);
+        this.currentPlayer=new Player(original.getCurrentplayer().getId(),original.getCurrentplayer().getCurrentField(),false,original.getCurrentplayer().getTickets());
         this.gameState=original.gameState;
         this.detectives = new ArrayList<>();
         for (Detective detective : original.getDetectives()) {
-            this.detectives.add(new Detective(detective.getId(), detective.getCurrentField(), false));
+            this.detectives.add(new Detective(detective.getId(), detective.getCurrentField(), false,detective.getTickets()));
         }
-        this.misterX=new MisterX(original.getMisterX().getId(),original.getMisterX().getCurrentField(),false);
+        this.misterX=new MisterX(original.getMisterX().getId(),original.getMisterX().getCurrentField(),false,original.getMisterX().getTickets());
         
         if (original.getLastMisterXFields().getLast()==null){
             this.lastMisterXFields = new ArrayList<>();;
@@ -129,10 +129,21 @@ public class GameMap{
     }
 
     private void initializePlayers(){
+        
+        HashMap<VehicleType,Integer> misterXTickets=new HashMap<>();
+        misterXTickets.put(VehicleType.TAXI, 10);
+        misterXTickets.put(VehicleType.BUS, 10);
+        misterXTickets.put(VehicleType.TRAIN, 10);
+
+
         for (int i=0;i<=3;i++){
-            detectives.add(new Detective(i, startingFieldsDetectives.remove( (int)(Math.random() * ((startingFieldsDetectives.size()-1) + 1) )),false));
+            HashMap<VehicleType,Integer> detectiveTickets=new HashMap<>();
+            detectiveTickets.put(VehicleType.TAXI, 10);
+            detectiveTickets.put(VehicleType.BUS, 10);
+            detectiveTickets.put(VehicleType.TRAIN, 10);
+            detectives.add(new Detective(i, startingFieldsDetectives.remove( (int)(Math.random() * ((startingFieldsDetectives.size()-1) + 1) )),false,detectiveTickets));
         }
-        misterX=new MisterX(4, startingFieldsMisterX.remove( (int)(Math.random() * ((startingFieldsMisterX.size()-1) + 1)) ),misterXPlayedByHuman);
+        misterX=new MisterX(4, startingFieldsMisterX.remove( (int)(Math.random() * ((startingFieldsMisterX.size()-1) + 1)) ),misterXPlayedByHuman,misterXTickets);
 
         currentPlayer=misterX;
     }
@@ -169,7 +180,7 @@ public class GameMap{
                         legalMoves.add(legalMove);
                     }
                 }else{   
-                    if(isFieldWithoutDetectives(allFields.get(endPoint-1)) && VehicleType.values()[graph.get(key).indexOf(transports)]!=VehicleType.SHIP){
+                    if(isFieldWithoutDetectives(allFields.get(endPoint-1)) && VehicleType.values()[graph.get(key).indexOf(transports)]!=VehicleType.SHIP && player.getTickets().get(VehicleType.values()[graph.get(key).indexOf(transports)])>0){
                         Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
                         legalMoves.add(legalMove);
                     }
@@ -227,11 +238,11 @@ public class GameMap{
         GameMap clone=new GameMap(this);
        
         Move move=currentPlayer.getMove(this);
+    
         if (!equalGameMap(clone)) {
             throw new IllegalStateException("!!!-ILLEGAL: CHANGED STATE OF THE BOARD-!!! in GameMap MakeMove()");
         }
-
-        
+       
         
         
         if (currentPlayer==misterX && lastMisterXFields.getLast()!=null){
@@ -252,7 +263,12 @@ public class GameMap{
             Thread.sleep(moveTime);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
-                currentPlayer= (index<3)? detectives.get(index+1) : misterX;
+                if (index<3){
+                    currentPlayer=detectives.get(index+1);
+                }else{
+                    currentPlayer=misterX;
+                    round++;
+                }
             }else{
                 gameState=GameState.DETECTIVES_WIN;
             }
@@ -266,7 +282,7 @@ public class GameMap{
             //System.out.println("Player"+currentPlayer.getId()+" "+move);
             Thread.sleep(moveTime);
             currentPlayer.setCurrentField(move.getTargetField());
-
+            currentPlayer.reduceTickets(move.getVehicleTyp());
 
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
@@ -310,7 +326,7 @@ public class GameMap{
                     gameState=GameState.DETECTIVES_WIN;
                 }
             }
-
+            
         }
     }
 

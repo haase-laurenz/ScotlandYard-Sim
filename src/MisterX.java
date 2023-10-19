@@ -1,11 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
 public class MisterX extends Player {
     
-    public MisterX(int id,Field currentField,boolean playedByHuman){
-        super(id, currentField,playedByHuman);
+    public MisterX(int id,Field currentField,boolean playedByHuman,HashMap<VehicleType,Integer> tickets){
+        super(id, currentField,playedByHuman,tickets);
     }
 
     @Override
@@ -67,8 +68,8 @@ public class MisterX extends Player {
 
             }
             Move move= new Move(this.getCurrentField(), new Field(32), VehicleType.SHIP);
-            gameMap.makeMove(move);
-            gameMap.undoMove(move);
+            //gameMap.makeMove(move);
+            //gameMap.undoMove(move);
             int zufall=(int)(Math.random() * ((bestMoves.size()-1) + 1));
             return bestMoves.get(zufall);
            
