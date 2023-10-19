@@ -30,6 +30,7 @@ public class GameMap{
     private Field lastMisterXField=null;
     private List<VehicleType> lastMisterXVehicleTypes=new ArrayList<>();
     private Set<Field> misterXCloud=new HashSet<>();
+    private List<Move> allMisterXMoves=new ArrayList<>();
 
 
 
@@ -200,6 +201,10 @@ public class GameMap{
         return lastMisterXField;
     }
 
+    public List<VehicleType> getLastMisterXVehicleTypes(){
+        return lastMisterXVehicleTypes;
+    }
+
     public void makeMove(int moveTime) throws InterruptedException{
 
         if (twoPlayersSameField()){
@@ -346,10 +351,6 @@ public class GameMap{
 
     }
 
-    public List<VehicleType> getLastMisterXVehicleTypes(){
-        return lastMisterXVehicleTypes;
-    }
-
     public void undoMove(Move move){
         if (twoPlayersSameField()){
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
@@ -369,21 +370,31 @@ public class GameMap{
                 throw new IllegalArgumentException("VEHICLE-TYPE CANNOT BE NULL");
             }
 
+
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 if (index>0){
                     currentPlayer=detectives.get(index-1);
                 }else{
+                    lastMisterXVehicleTypes.removeLast();
                     currentPlayer=misterX;
-                    round--;
+                    if (round==2){
+                        lastMisterXField=null;
+                    }else if(round==7 || round==12 || round==17 || round==23){
+                        lastMisterXField=currentPlayer.getCurrentField();
+                    }
+                    
                 }
+                
 
             }else{
-                if (round==2 || round==7 || round==12 || round==17 || round==23){
-                    lastMisterXField=currentPlayer.getCurrentField();
-                }
-                lastMisterXVehicleTypes.removeLast();
+
+                
+
+                round--;
+                
                 currentPlayer=detectives.get(3);
+                
             }
 
             if (round<30){
@@ -396,7 +407,7 @@ public class GameMap{
                 }
             }
 
-            currentPlayer.setCurrentField(move.getTargetField());
+            currentPlayer.setCurrentField(move.getStartField());
 
         }
     }
@@ -469,7 +480,7 @@ public class GameMap{
             failed=true;
         }
 
-        if (clone.getGameState()!=null&&!this.gameState.equals(clone.getGameState())){
+        if (!this.gameState.equals(clone.getGameState())){
             System.out.println("EqualGameMap Test 2 failed: getMove changed GameState");
             failed=true;
         }
@@ -481,15 +492,15 @@ public class GameMap{
                 failed=true;
             }
         }
-
         if (this.misterX.getCurrentField().getId()!=clone.getMisterX().getCurrentField().getId() || this.misterX.getId()!=clone.getMisterX().getId()){
             System.out.println("EqualGameMap Test 4 failed: getMove changed MisterX");
             failed=true;
         }
-        
-        if ( (this.getLastMisterXField()!=null && this.getLastMisterXField()!=null)&&this.getLastMisterXField().getId()!=clone.getLastMisterXField().getId()){
-            System.out.println("EqualGameMap Test 5 failed: getMove changed lastMisterXField");
-            failed=true;
+        if ((this.getLastMisterXField() == null && clone.getLastMisterXField() != null) 
+            || (this.getLastMisterXField() != null 
+                && this.getLastMisterXField().getId()!=(clone.getLastMisterXField().getId()))) {
+            System.out.println("EqualGameMap Test 5 failed: getMove changed lastMisterXField: should be:"+clone.getLastMisterXField().getId()+" is:"+this.getLastMisterXField().getId());
+            failed = true;
         }
         if (clone.getLastMisterXVehicleTypes().size()!=this.getLastMisterXVehicleTypes().size()){
             System.out.println("EqualGameMap Test 6 failed: getMove changed lastMisterXVehicleTypes");
