@@ -233,11 +233,11 @@ public class GameGUI {
                     int[] hm_coords=FieldIdToCoords(i+1);
                     int hm_x = hm_coords[0];
                     int hm_y = hm_coords[1];
-                    double scaledValue = Math.log(hm.get(i) + 1) / Math.log(maxValue + 1);
-                    int red = (int) (255 * scaledValue);
-                    int green = (int) (255 * (1 - scaledValue));
+                    //double scaledValue = Math.log(hm.get(i) + 1) / Math.log(maxValue + 1);
+                    int red = (int) (255 * hm.get(i)/maxValue);
+                    int green = (int) (255 * (1 - hm.get(i)/maxValue));
 
-                    Color transparentColor = new Color(red, green, 0, 240); // 128 steht für die Transparenz (0-255)
+                    Color transparentColor = new Color(red, green, 0, (int) (240 * hm.get(i)/maxValue)); // 128 steht für die Transparenz (0-255)
                     g.setColor(transparentColor);
                     g.fillOval(hm_x, hm_y, 40, 40);
                     g.setColor(Color.BLACK);
