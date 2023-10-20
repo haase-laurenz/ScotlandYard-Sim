@@ -25,6 +25,7 @@ public class Detective extends Player{
         if (gameMap.getMisterXCloud().size()>0){
             
             for (Move move:myMoves){
+                
                 int minDist=1000;
                 for(Field field:gameMap.getMisterXCloud()){
                     int distance=gameMap.distanceBetween(move.getTargetField(), field,true);
@@ -36,12 +37,9 @@ public class Detective extends Player{
                     bestScore=minDist;
                     bestMove=move;
                 }
+                
             }
         }
-    
-        Move move= new Move(this.getCurrentField(), new Field(32), VehicleType.SHIP);
-        //gameMap.makeMove(move);
-        //gameMap.undoMove(move);
 
         return bestMove;
     }

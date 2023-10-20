@@ -268,7 +268,7 @@ public class GameMap{
         
 
         if (move==null){
-
+           
             Thread.sleep(moveTime);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
@@ -281,7 +281,6 @@ public class GameMap{
             }else{
                 gameState=GameState.DETECTIVES_WIN;
             }
-
         }else{
           
             if (move.getVehicleTyp()==null){
@@ -289,9 +288,9 @@ public class GameMap{
                 throw new IllegalArgumentException("VEHICLE-TYPE CANNOT BE NULL");
             }
 
+         
             Thread.sleep(moveTime);
-           
-            System.out.println(this.getCurrentplayer().getTickets());
+            currentPlayer.setCurrentField(move.getTargetField());
             currentPlayer.reduceTickets(move.getVehicleTyp());
            
             if (detectives.contains(currentPlayer)){
@@ -337,7 +336,7 @@ public class GameMap{
                     gameState=GameState.DETECTIVES_WIN;
                 }
             }
-            
+            System.out.println("HI");
         }
     }
 
@@ -437,7 +436,7 @@ public class GameMap{
                 
             }
 
-            if (round<30){
+            if (round<=30){
                 gameState=GameState.ONGOING;  
             }
 
@@ -521,7 +520,7 @@ public class GameMap{
         }
 
         if (!this.gameState.equals(clone.getGameState())){
-            System.out.println("EqualGameMap Test 2 failed: getMove changed GameState");
+            System.out.println("EqualGameMap Test 2 failed: getMove changed GameState - should be:"+clone.getGameState()+" is:"+this.gameState);
             failed=true;
         }
 
@@ -540,7 +539,7 @@ public class GameMap{
         if ((this.getLastMisterXFields().getLast() == null && clone.getLastMisterXFields().getLast() != null) 
             || (this.getLastMisterXFields().getLast() != null 
                 && this.getLastMisterXFields().getLast().getId()!=(clone.getLastMisterXFields().getLast().getId()))) {
-            System.out.println("EqualGameMap Test 5 failed: getMove changed lastMisterXField: should be:"+clone.getLastMisterXFields().getLast().getId()+" is:"+this.getLastMisterXFields().getLast().getId());
+            System.out.println("EqualGameMap Test 5 failed: getMove changed lastMisterXField - should be:"+clone.getLastMisterXFields().getLast().getId()+" is:"+this.getLastMisterXFields().getLast().getId());
             failed = true;
         }
  

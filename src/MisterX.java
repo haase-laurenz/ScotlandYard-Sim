@@ -49,6 +49,8 @@ public class MisterX extends Player {
             Move bestMove=null;
 
             for (Move move:myMoves){
+                gameMap.makeMove(move);
+                gameMap.undoMove(move);
                 int minDist=Integer.MAX_VALUE;
                 for (Detective detective:gameMap.getDetectives()){
                     int dist=gameMap.distanceBetween(move.getTargetField(),detective.getCurrentField(),false);
