@@ -71,7 +71,8 @@ public class MisterX extends Player {
             //gameMap.makeMove(move);
             //gameMap.undoMove(move);
             int zufall=(int)(Math.random() * ((bestMoves.size()-1) + 1));
-            return bestMoves.get(zufall);
+            bestMove=bestMoves.get(zufall);
+            return bestMove;
            
 
         }

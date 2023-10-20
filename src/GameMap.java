@@ -131,16 +131,17 @@ public class GameMap{
     private void initializePlayers(){
         
         HashMap<VehicleType,Integer> misterXTickets=new HashMap<>();
-        misterXTickets.put(VehicleType.TAXI, 10);
-        misterXTickets.put(VehicleType.BUS, 10);
-        misterXTickets.put(VehicleType.TRAIN, 10);
+        misterXTickets.put(VehicleType.TAXI, 100);
+        misterXTickets.put(VehicleType.BUS, 100);
+        misterXTickets.put(VehicleType.TRAIN, 100);
+        misterXTickets.put(VehicleType.BLACK_TICKET,2);
 
 
         for (int i=0;i<=3;i++){
             HashMap<VehicleType,Integer> detectiveTickets=new HashMap<>();
-            detectiveTickets.put(VehicleType.TAXI, 10);
-            detectiveTickets.put(VehicleType.BUS, 10);
-            detectiveTickets.put(VehicleType.TRAIN, 10);
+            detectiveTickets.put(VehicleType.TAXI,12);
+            detectiveTickets.put(VehicleType.BUS, 8);
+            detectiveTickets.put(VehicleType.TRAIN, 5);
             detectives.add(new Detective(i, startingFieldsDetectives.remove( (int)(Math.random() * ((startingFieldsDetectives.size()-1) + 1) )),false,detectiveTickets));
         }
         misterX=new MisterX(4, startingFieldsMisterX.remove( (int)(Math.random() * ((startingFieldsMisterX.size()-1) + 1)) ),misterXPlayedByHuman,misterXTickets);
@@ -176,8 +177,15 @@ public class GameMap{
             for(Integer endPoint:transports){
                 if (!isDetective){
                     if (!allFields.get(endPoint-1).isOccupied()){
-                        Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
-                        legalMoves.add(legalMove);
+                        if (VehicleType.values()[graph.get(key).indexOf(transports)]==VehicleType.SHIP){
+                            Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.BLACK_TICKET);
+                            legalMoves.add(legalMove);
+                        }else{
+                            Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
+                            legalMoves.add(legalMove);
+                        }
+                        
+                        
                     }
                 }else{   
                     if(isFieldWithoutDetectives(allFields.get(endPoint-1)) && VehicleType.values()[graph.get(key).indexOf(transports)]!=VehicleType.SHIP && player.getTickets().get(VehicleType.values()[graph.get(key).indexOf(transports)])>0){
@@ -255,11 +263,12 @@ public class GameMap{
         }
 
        
-
+        System.out.println(this.getCurrentplayer().getId());
+        
         
 
         if (move==null){
-            //System.out.println("Player"+currentPlayer.getId()+"has no moves");
+
             Thread.sleep(moveTime);
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
@@ -272,18 +281,19 @@ public class GameMap{
             }else{
                 gameState=GameState.DETECTIVES_WIN;
             }
+
         }else{
-            
+          
             if (move.getVehicleTyp()==null){
                 System.out.println("MAKE MOVE ERROR: VEHICLE-TYPE CANNOT BE NULL");
                 throw new IllegalArgumentException("VEHICLE-TYPE CANNOT BE NULL");
             }
 
-            //System.out.println("Player"+currentPlayer.getId()+" "+move);
             Thread.sleep(moveTime);
-            currentPlayer.setCurrentField(move.getTargetField());
+           
+            System.out.println(this.getCurrentplayer().getTickets());
             currentPlayer.reduceTickets(move.getVehicleTyp());
-
+           
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 currentPlayer= (index<3)? detectives.get(index+1) : misterX;
@@ -302,16 +312,17 @@ public class GameMap{
                     misterXCloud.add(lastMisterXFields.getLast());
                 }
 
-                List<Field> fieldsToRemove = new ArrayList<>();
-
-                for(Field field:misterXCloud){
-                    List<Integer> list=graph.get(field.getId()).get(move.getVehicleTyp().ordinal());
-                    if (list.isEmpty()){
-                       fieldsToRemove.add(field);
+                if(move.getVehicleTyp()!=VehicleType.BLACK_TICKET){
+                    List<Field> fieldsToRemove = new ArrayList<>();
+                    for(Field field:misterXCloud){
+                        List<Integer> list=graph.get(field.getId()).get(move.getVehicleTyp().ordinal());
+                        if (list.isEmpty()){
+                        fieldsToRemove.add(field);
+                        }
                     }
-                    
+                    misterXCloud.removeAll(fieldsToRemove);
                 }
-                misterXCloud.removeAll(fieldsToRemove);
+                
 
                 lastMisterXVehicleTypes.add(move.getVehicleTyp());
                 currentPlayer=detectives.get(0);
