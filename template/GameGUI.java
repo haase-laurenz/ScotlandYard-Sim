@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class GameGUI {
@@ -218,11 +217,11 @@ public class GameGUI {
                     double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
                     if (currentGame==1){
                         g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                        schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,975                  
+                                        schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,getHeight()*8/10                    
                     ) ;
                     }else{
                         g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
-                                        schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,975                  
+                                        schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,getHeight()*8/10               
                     ) ;
                     }
                     
@@ -249,11 +248,11 @@ public class GameGUI {
                         g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
                                         schnitt+"% |--------| ? Rounds per Game      ",getWidth()/2-380,975                  
                     ) ;
-                    }else{
+                }else{
                         g.drawString("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
                                         schnitt+"% |--------| "+total_rounds/(currentGame-1)+" Rounds per Game      ",getWidth()/2-380,975                  
-                    ) ;
-                    }
+                        ) ;
+                }
             }
 
         }

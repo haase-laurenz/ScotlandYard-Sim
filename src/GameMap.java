@@ -240,6 +240,7 @@ public class GameMap{
 
     public void makeMove(int moveTime) throws InterruptedException{
         if (twoPlayersSameField()){
+            System.out.println("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
         }
        
@@ -261,9 +262,6 @@ public class GameMap{
                 }
             }
         }
-
-       
-        System.out.println(this.getCurrentplayer().getId());
         
         
 
@@ -336,15 +334,11 @@ public class GameMap{
                     gameState=GameState.DETECTIVES_WIN;
                 }
             }
-            System.out.println("HI");
+    
         }
     }
 
     public void makeMove(Move move){
-
-        if (twoPlayersSameField()){
-            throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
-        }
 
         if (move==null){
             if (detectives.contains(currentPlayer)){
@@ -393,10 +387,8 @@ public class GameMap{
     }
 
     public void undoMove(Move move){
-        if (twoPlayersSameField()){
-            throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
-        }
-
+        
+       
         if (move==null){
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
@@ -413,19 +405,22 @@ public class GameMap{
 
 
             if (detectives.contains(currentPlayer)){
+
                 int index=detectives.indexOf(currentPlayer);
                 if (index>0){
                     currentPlayer=detectives.get(index-1);
                 }else{
+                  
                     lastMisterXVehicleTypes.removeLast();
+                  
                     currentPlayer=misterX;
                     if (round==2 || round==7 || round==12 || round==17 || round==23){
                         lastMisterXFields.removeLast();
                     }
+                  
                     
                 }
                 
-
             }else{
 
                 

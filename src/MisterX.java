@@ -70,8 +70,8 @@ public class MisterX extends Player {
 
             }
             Move move= new Move(this.getCurrentField(), new Field(32), VehicleType.SHIP);
-            //gameMap.makeMove(move);
-            //gameMap.undoMove(move);
+            gameMap.makeMove(move);
+            gameMap.undoMove(move);
             int zufall=(int)(Math.random() * ((bestMoves.size()-1) + 1));
             bestMove=bestMoves.get(zufall);
             return bestMove;

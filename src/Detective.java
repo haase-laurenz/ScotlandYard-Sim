@@ -1,5 +1,4 @@
 import java.util.List;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Detective extends Player{
@@ -21,11 +20,12 @@ public class Detective extends Player{
        
         int bestScore=1000;
         Move bestMove=myMoves.get(0);
-        
+
         if (gameMap.getMisterXCloud().size()>0){
             
             for (Move move:myMoves){
-                
+                gameMap.makeMove(move);          
+                gameMap.undoMove(move);
                 int minDist=1000;
                 for(Field field:gameMap.getMisterXCloud()){
                     int distance=gameMap.distanceBetween(move.getTargetField(), field,true);
@@ -40,7 +40,9 @@ public class Detective extends Player{
                 
             }
         }
-
+        Move move= new Move(this.getCurrentField(), new Field(32), VehicleType.BUS);
+        gameMap.makeMove(move);
+        gameMap.undoMove(move);
         return bestMove;
     }
 
