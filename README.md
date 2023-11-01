@@ -10,19 +10,24 @@
   
 ## How to Run
 
-1. **Compile the Code:**
-   - Open a terminal or command prompt and navigate to the project directory.
+### 1. Terminal
+   **Compile the Code:**
+   - Open a terminal or command prompt and navigate to the project directory. 
    - Compile the Java code using the following command:
-     ```bash
-     javac *.java
-     ```
-
-2. **Run the Game:**
+      ```bash
+      javac *.java
+      ```
+      
+   **Run the Game:**
    - After compilation, run the game with the following command:
-     ```bash
-     java Main
-     ```
+      ```bash
+      java Main
+      ```
    - Follow the on-screen instructions to play the game.
+
+### 2. IDE
+  - Download the project and open the project in your choosen IDE
+  - Go to SCOTLAND-YARD/src/Main and run the code
 
 ## Game Overview
 
