@@ -326,6 +326,7 @@ public class GameMap{
         }
     }
 
+    //making a move on the board
     public void makeMove(Move move){
 
         if (move==null){
@@ -374,6 +375,7 @@ public class GameMap{
 
     }
 
+    //undoing a move on the board
     public void undoMove(Move move){
         
        
