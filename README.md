@@ -32,20 +32,6 @@
 ## Game Overview
 
 Scotland Yard-Sim is a Java-based simulation of the classic board game "Scotland Yard." The game involves a strategic chase between the elusive Mister X and the detectives. The players take turns making moves, and the game continues until Mister X is captured or manages to escape.
-
-## Features
-
-- **GameMap Generation:**
-  - The game map is dynamically generated, providing a varied and challenging playing environment in each session.
-
-- **Player Interaction:**
-  - Detectives and Mister X take turns making moves, with different strategies employed by each player type.
-
-- **Game Outcome:**
-  - The game can end in either a victory for Mister X (if he successfully evades capture for a set number of rounds) or a victory for the detectives (if they capture Mister X).
-
-- **Graph-Based Movement:**
-  - The movement of players is determined by a graph that represents the transportation network of the game. Different modes of transport (taxi, bus, train, ship) are available for travel.
  
 ## Making your Bot!
 
