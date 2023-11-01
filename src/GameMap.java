@@ -148,10 +148,6 @@ public class GameMap{
         System.out.println("MisterX steht auf dem Feld "+misterX.getCurrentField().getId());
     }
 
-    public boolean isFieldEmpty(Field field){
-        return !allFields.get(field.getId()-1).isOccupied();
-    }
-
     public boolean isFieldWithoutDetectives(Field field){
         for(Detective otherDetective:detectives){
             if (otherDetective.getCurrentField().equals(field)){
@@ -362,7 +358,7 @@ public class GameMap{
                 currentPlayer=detectives.get(0);
             }
 
-            if (round==30){
+            if (round==24){
                 gameState=GameState.MISTERX_WIN;  
             }
 
@@ -423,7 +419,7 @@ public class GameMap{
                 
             }
 
-            if (round<=30){
+            if (round<=24){
                 gameState=GameState.ONGOING;  
             }
 
