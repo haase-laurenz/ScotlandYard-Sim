@@ -27,7 +27,7 @@
 
 ### 2. IDE
   - Download the project and open the project in your choosen IDE
-  - Go to SCOTLAND-YARD/src/Main and run the code
+  - Go to /src/Main and run the code
 
 ## Game Overview
 
