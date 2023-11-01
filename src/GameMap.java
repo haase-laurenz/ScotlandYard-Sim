@@ -325,7 +325,7 @@ public class GameMap{
                 currentPlayer=detectives.get(0);
             }
 
-            if (round==30){
+            if (round==24){
                 gameState=GameState.MISTERX_WIN;  
             }
 
