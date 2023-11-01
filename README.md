@@ -1,7 +1,6 @@
 # ScotlandYard-Sim
  
 ## Requirements
-[Dokumentation](Dokumentation.md)
 - **Java Installation:**
   - Ensure that you have Java installed on your system. You can check this by running the following command in your command prompt or terminal:
     ```bash
@@ -42,22 +41,12 @@ Scotland Yard-Sim is a Java-based simulation of the classic board game "Scotland
 
 - **Graph-Based Movement:**
   - The movement of players is determined by a graph that represents the transportation network of the game. Different modes of transport (taxi, bus, train, ship) are available for travel.
+ 
+## Making your Bot!
 
-## Future Development
+- Go try to make your own bot. There are several tactics in the game, which can be deflected.
+  There are different tactical approaches that you can try. Look at the [Dokumentation](Dokumentation.md) for
+  more information about the board and it's behavior. 
 
-- **Graphical User Interface (GUI):**
-  - Consider integrating a graphical interface to enhance the gaming experience. This could include a visual representation of the game map and player positions.
-
-- **Multiplayer Support:**
-  - Explore the possibility of adding multiplayer functionality to allow multiple users to play the game simultaneously.
-
-- **Optimization and AI:**
-  - Further optimize player strategies and consider implementing more advanced AI for improved gameplay.
-
-## Contributors
-
-- [Your Name]
-
-Feel free to contribute to the project and make it even more exciting!
 
 Happy gaming!
