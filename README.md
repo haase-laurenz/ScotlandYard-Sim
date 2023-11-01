@@ -50,7 +50,7 @@ Scotland Yard-Sim is a Java-based simulation of the classic board game "Scotland
 ## Making your Bot!
 
 - Go try to make your own bot. There are different tactical approaches that you can try. To do so, you have to edit the getMove() in MisterXMoveStrategy.java/DetectiveMoveStrategy.java in the src.
-  (If you change any state of the gameBoard during the getMove() - the programm won't run - look at the Error printing in your console). Look at the [Dokumentation](Dokumentation.md) for more
+  (If you change any state of the gameBoard during the getMove() - the programm won't run - look at the Error printing in your console). Look at the [Documentation](Dokumentation.md) for more
   information about the board and it's behavior. 
 
 
