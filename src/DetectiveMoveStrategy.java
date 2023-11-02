@@ -37,16 +37,42 @@ public class DetectiveMoveStrategy {
         
             int maxActivity=Integer.MIN_VALUE;
 
-            for (Move move:myMoves){
-                Field targetField = move.getTargetField();
-                int key=targetField.getId();
-                int activity=graph.get(key).get(0).size()+graph.get(key).get(1).size()+graph.get(key).get(2).size();
+            for (Move move1:myMoves){
+                Field startField1 = move1.getStartField();
+                Field targetField1 = move1.getTargetField();
 
-                if (activity>maxActivity){
-                    maxActivity=activity;
-                    bestMove=move;
+                int key1=targetField1.getId();
+                int activity1=graph.get(key1).get(0).size()+graph.get(key1).get(1).size()*2+graph.get(key1).get(2).size()*3;
+
+                if (activity1>maxActivity){
+                    maxActivity=activity1;
+                    bestMove=move1;
                 }
+
+
+                if (gameMap.getRounds()<1){
+                    detective.setCurrentField(targetField1);
+
+                    List<Move> mySecondMoves=gameMap.getLegalMoves(detective, true);
+                    for(Move move2:mySecondMoves){
+
+                        Field targetField2 = move2.getTargetField();
+                        int key=targetField2.getId();
+
+                        int activity2=graph.get(key).get(0).size()+graph.get(key).get(1).size()*2+graph.get(key).get(2).size()*3;
+
+                        if (activity2>maxActivity){
+                            maxActivity=activity2;
+                            bestMove=move1;
+                        }
+                    }
+
+                    detective.setCurrentField(startField1);
+                }
+                
             }
+
+                
 
             
             
