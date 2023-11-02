@@ -1,4 +1,9 @@
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 public class DetectiveMoveStrategy {
     public static Move getMove(Detective detective, GameMap gameMap) {
@@ -8,13 +13,11 @@ public class DetectiveMoveStrategy {
         if (myMoves.size()==0) return null;
        
         int bestScore=1000;
-        Move bestMove=myMoves.get(0);
+        Move bestMove=null;
 
         if (gameMap.getMisterXCloud().size()>0){
             
             for (Move move:myMoves){
-                gameMap.makeMove(move);          
-                gameMap.undoMove(move);
                 int minDist=1000;
                 for(Field field:gameMap.getMisterXCloud()){
                     int distance=gameMap.distanceBetween(move.getTargetField(), field,true);
@@ -28,11 +31,31 @@ public class DetectiveMoveStrategy {
                 }
                 
             }
+        }else{
+
+            HashMap<Integer,List<List<Integer>>> graph=gameMap.getGraph();
+        
+            int maxActivity=Integer.MIN_VALUE;
+
+            for (Move move:myMoves){
+                Field targetField = move.getTargetField();
+                int key=targetField.getId();
+                int activity=graph.get(key).get(0).size()+graph.get(key).get(1).size()+graph.get(key).get(2).size();
+
+                if (activity>maxActivity){
+                    maxActivity=activity;
+                    bestMove=move;
+                }
+            }
+
+            
+            
+
+            
         }
-        Move move= new Move(detective.getCurrentField(), new Field(32), VehicleType.BUS);
-        gameMap.makeMove(move);
-        gameMap.undoMove(move);
-        return bestMove;
+
+        return (bestMove!=null)?bestMove:myMoves.get(0);
 
     }
 }
+
