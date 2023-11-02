@@ -36,7 +36,7 @@ public class MisterXMoveStrategy {
 
             int zufall=(int)(Math.random() * ((bestMoves.size()-1) + 1));
             bestMove=bestMoves.get(zufall);
-            bestMove.setDoubleMove();
+            
             return bestMove;
     
     }

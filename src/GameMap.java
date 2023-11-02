@@ -231,7 +231,6 @@ public class GameMap{
     }
 
     public boolean isDoubleMoveAllowed(){
-        System.out.println(this.round-lastDoubleMove);
         return this.round-lastDoubleMove>0;
     }
 
@@ -332,6 +331,7 @@ public class GameMap{
                         throw new IllegalArgumentException("DOUBLE MOVES ERROR: PLAYED DOUBLE MOVE ALTHOUGH THERE WERE NO LEFT");
                     }
                     misterX.reduceDoubleMoves();
+                    round++;
                     lastDoubleMove=round;
 
                 }
