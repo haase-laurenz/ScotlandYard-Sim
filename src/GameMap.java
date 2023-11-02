@@ -330,6 +330,14 @@ public class GameMap{
                         System.out.println("DOUBLE MOVES ERROR: PLAYED DOUBLE MOVE ALTHOUGH THERE WERE NO LEFT");
                         throw new IllegalArgumentException("DOUBLE MOVES ERROR: PLAYED DOUBLE MOVE ALTHOUGH THERE WERE NO LEFT");
                     }
+
+                    if (round==23){
+                        System.out.println("CANNOT PLAY A DOUBLE MOVE AT ROUND NR 23 (Last Move)");
+                        throw new IllegalArgumentException("CANNOT PLAY A DOUBLE MOVE AT MOVE NR 23 (Last Move)");
+                    }
+
+ 
+                    
                     misterX.reduceDoubleMoves();
                     round++;
                     lastDoubleMove=round;
