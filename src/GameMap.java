@@ -34,14 +34,18 @@ public class GameMap{
     
     private boolean misterXPlayedByHuman;
 
+    private int lastDoubleMove;
+
     public GameMap(boolean misterXPlayedByHuman)throws FileNotFoundException, IOException{
         this.round=0;
+        lastDoubleMove=-1;
         this.gameState=GameState.ONGOING;
         this.misterXPlayedByHuman=misterXPlayedByHuman;
         this.graph=Graph.loadGraphFromCSV();
         initializeFields();
         initializePlayers();
         lastMisterXFields.add(null);
+
         
     }
 
@@ -166,10 +170,10 @@ public class GameMap{
                 if (!isDetective){
                     if (!allFields.get(endPoint-1).isOccupied()){
                         if (VehicleType.values()[graph.get(key).indexOf(transports)]==VehicleType.SHIP){
-                            Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.BLACK_TICKET);
+                            Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.BLACK_TICKET,false);
                             legalMoves.add(legalMove);
                         }else{
-                            Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
+                            Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)],false);
                             legalMoves.add(legalMove);
                         }
                         
@@ -177,7 +181,7 @@ public class GameMap{
                     }
                 }else{   
                     if(isFieldWithoutDetectives(allFields.get(endPoint-1)) && VehicleType.values()[graph.get(key).indexOf(transports)]!=VehicleType.SHIP && player.getTickets().get(VehicleType.values()[graph.get(key).indexOf(transports)])>0){
-                        Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)]);
+                        Move legalMove=new Move(allFields.get(key-1), allFields.get(endPoint-1), VehicleType.values()[graph.get(key).indexOf(transports)],false);
                         legalMoves.add(legalMove);
                     }
                 }
@@ -224,6 +228,11 @@ public class GameMap{
 
     public List<VehicleType> getLastMisterXVehicleTypes(){
         return lastMisterXVehicleTypes;
+    }
+
+    public boolean isDoubleMoveAllowed(){
+        System.out.println(this.round-lastDoubleMove);
+        return this.round-lastDoubleMove>0;
     }
 
     public void makeMove(int moveTime) throws InterruptedException{
@@ -310,7 +319,23 @@ public class GameMap{
                 
 
                 lastMisterXVehicleTypes.add(move.getVehicleTyp());
-                currentPlayer=detectives.get(0);
+                if (!move.isDoubleMove()){
+                    currentPlayer=detectives.get(0);
+                }else{
+                    if (!isDoubleMoveAllowed()){
+                        System.out.println("DOUBLE MOVES ERROR: CANNOT PLAY TWO DOUBLE-MOVES IN A ROW AS MISTERX");
+                        throw new IllegalArgumentException("DOUBLE MOVES ERROR: CANNOT PLAY TO DOUBLE MOVES IN A ROW");
+                    }   
+                    
+                    if (misterX.getDoubleMoves()<1){
+                        System.out.println("DOUBLE MOVES ERROR: PLAYED DOUBLE MOVE ALTHOUGH THERE WERE NO LEFT");
+                        throw new IllegalArgumentException("DOUBLE MOVES ERROR: PLAYED DOUBLE MOVE ALTHOUGH THERE WERE NO LEFT");
+                    }
+                    misterX.reduceDoubleMoves();
+                    lastDoubleMove=round;
+
+                }
+                
             }
 
             if (round==24){

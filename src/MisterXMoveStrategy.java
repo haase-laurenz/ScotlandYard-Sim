@@ -14,8 +14,7 @@ public class MisterXMoveStrategy {
             Move bestMove=null;
 
             for (Move move:myMoves){
-                gameMap.makeMove(move);
-                gameMap.undoMove(move);
+
                 int minDist=Integer.MAX_VALUE;
                 for (Detective detective:gameMap.getDetectives()){
                     int dist=gameMap.distanceBetween(move.getTargetField(),detective.getCurrentField(),false);
@@ -34,11 +33,10 @@ public class MisterXMoveStrategy {
                 }
 
             }
-            Move move= new Move(misterX.getCurrentField(), new Field(32), VehicleType.SHIP);
-            gameMap.makeMove(move);
-            gameMap.undoMove(move);
+
             int zufall=(int)(Math.random() * ((bestMoves.size()-1) + 1));
             bestMove=bestMoves.get(zufall);
+            bestMove.setDoubleMove();
             return bestMove;
     
     }
