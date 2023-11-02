@@ -5,7 +5,7 @@
 | `GameMap` | new GameMap(boolean misterXPlayedByHuman) | Constructor for creating a GameMap|
 | `boolean` | isFieldWithoutDetectives() | returns true, if a field is not occupied by a Detective |
 | `List<Move>` | getLegalMoves(player Player, boolean isDetective) | returns all legal moves for the player |
-| `Graph` | getGraph() | returns the graph (all possible Moves on the Board) |
+| `HashMap <Integer,List<List<Integer>>>` | getGraph() | returns the graph (all possible Moves on the Board) |
 | `List<Detective>` | getDetectives() | returns all Detectives |
 | `int` | getRounds() | return current round |
 | `Set<Field>` | getMisterXCloud() | returns all Fields MisterX could stand on |
@@ -65,7 +65,7 @@
 
 | Type   | Definition                              | Notes                                                     |
 |--------|-----------------------------------------|-----------------------------------------------------------|
-| `HashMap <Integer,List<List<Integer>>>` | loadGraphFromCSV() | returns the Graph with all legal Moves|
+| `HashMap <Integer,List<List<Integer>>>` | loadGraphFromCSV() | returns the Graph with all legal Moves. Mapping FieldId to all VehicleTypes (0-3) mapping to the next FieldId|
 
 
 
