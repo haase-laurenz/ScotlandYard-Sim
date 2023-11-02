@@ -56,7 +56,7 @@ public class GameGUI {
                         protected Void doInBackground() throws Exception {
                             running = true;
                             try {
-                                gameManager.playGames(500,moveTime);
+                                gameManager.playGames(2000,moveTime);
                                 running = false;
                             } catch (IOException | InterruptedException e1) {
                                 e1.printStackTrace();

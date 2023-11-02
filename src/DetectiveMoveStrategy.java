@@ -33,6 +33,8 @@ public class DetectiveMoveStrategy {
             }
         }else{
 
+            //FINDING A GOOD POSITION AFTER 2 MOVES (we want Max Activity, when MisterX has to show his position)
+
             HashMap<Integer,List<List<Integer>>> graph=gameMap.getGraph();
         
             int maxActivity=Integer.MIN_VALUE;
@@ -71,12 +73,6 @@ public class DetectiveMoveStrategy {
                 }
                 
             }
-
-                
-
-            
-            
-
             
         }
 
