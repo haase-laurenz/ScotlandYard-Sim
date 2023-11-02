@@ -31,6 +31,10 @@ public class Move {
         this.isDoubleMove=true;
     }
 
+    public void setMoveVehicleType_BlackTicket(){
+        this.vehicleType=VehicleType.BLACK_TICKET;
+    }
+
     public String toString(){
         return "move from "+startField.getId()+" to "+targetField.getId()+" via "+vehicleType;
     }
