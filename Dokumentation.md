@@ -65,7 +65,7 @@
 
 | Type   | Definition                              | Notes                                                     |
 |--------|-----------------------------------------|-----------------------------------------------------------|
-| `HashMap <Integer,List<List<Integer>>>` | loadGraphFromCSV() | returns the Graph with all legal Moves. Mapping FieldId to all VehicleTypes (0-3) mapping to the next FieldId|
+| `HashMap <Integer,List<List<Integer>>>` | loadGraphFromCSV() | returns the Graph with all legal Moves. Mapping FieldID to all VehicleTypes (0-3) to all the next FieldIDs|
 
 
 
