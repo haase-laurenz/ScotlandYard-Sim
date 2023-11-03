@@ -342,7 +342,7 @@ public class GameMap{
                 
             }
 
-            if (round==24){
+            if (lastMisterXVehicleTypes.size()==24){
                 gameState=GameState.MISTERX_WIN;  
             }
 

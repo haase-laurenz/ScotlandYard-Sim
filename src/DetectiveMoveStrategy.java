@@ -15,44 +15,34 @@ public class DetectiveMoveStrategy {
 
             int bestScore=Integer.MAX_VALUE;
             
+            Field mostAwayFromTheOthers=null;
+            double minAvgDist=Double.MAX_VALUE;
+            
+            
 
-            int detectivesCountAfterMe=3-detective.getId();
+            for(Field field:gameMap.getMisterXCloud()){
+                double avgDist=0;
+                for (Detective otherDetective:gameMap.getDetectives()){
 
-            List<Field> closestFieldsForAfterDetectives=new ArrayList<>();
-            List<Integer> distanceToClosestField=new ArrayList<>();
-
-            if (detectivesCountAfterMe>0){
-
-                for (Detective otherDetective:gameMap.getDetectives().subList(4-detectivesCountAfterMe, 3)){
-                    Field closestField=null;
-                    int minDist=0;
-
-                    for(Field field:gameMap.getMisterXCloud()){
+                    if(otherDetective!=detective){
                         int distance=gameMap.distanceBetween(otherDetective.getCurrentField(), field,true);
-                        if (distance<minDist){
-                            closestField=field;
-                            minDist=distance;
-                        }
+                        avgDist+=distance/4.0;
                     }
-
-                    distanceToClosestField.add(minDist);
-                    closestFieldsForAfterDetectives.add(closestField);
-                }   
+                
+                }
+                if (avgDist<minAvgDist){
+                    mostAwayFromTheOthers=field;
+                }
             }
+
+                
 
             for (Move move:myMoves){
 
-                int minDist=Integer.MAX_VALUE;
+                int distance=gameMap.distanceBetween(move.getTargetField(), mostAwayFromTheOthers,true);
 
-                for(Field field:gameMap.getMisterXCloud()){
-                    int distance=gameMap.distanceBetween(move.getTargetField(), field,true);
-                    if (distance<minDist && (!closestFieldsForAfterDetectives.contains(field) || distance-distanceToClosestField.get(closestFieldsForAfterDetectives.indexOf(field))>0)){
-                        minDist=distance;
-                    }
-                }
-
-                if (minDist<bestScore){
-                    bestScore=minDist;
+                if (distance<bestScore){
+                    bestScore=distance;
                     bestMove=move;
                 }
             }

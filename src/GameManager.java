@@ -44,6 +44,7 @@ public class GameManager {
                 gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXFields().getLast(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
                 Thread.sleep(moveTime);
             }
+            
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 detective_wins++;
                 total_rounds+=gameMap.getRounds();
@@ -58,7 +59,6 @@ public class GameManager {
                 System.out.print("\r| Game:"+currentGame+" |--------| Wins M:"+misterX_wins+" | Wins D:"+detective_wins+" |--------| Rate:"+
                                     schnitt+"% |--------| "+total_rounds/(currentGame+1)+" Rounds per Game      "                  
                 ) ;
-                
             }
 
             List<Field> allF=gameMap.getAllFields();
