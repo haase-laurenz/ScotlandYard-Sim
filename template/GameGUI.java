@@ -214,7 +214,7 @@ public class GameGUI {
                     for(int i=0;i<24;i++){
                         g.drawString("Move "+(i+1)+": ", getWidth()/7, getHeight()/2-285+20*i);
                         g.drawLine(getWidth()/7,getHeight()/2-280+20*i,getWidth()/4,getHeight()/2-280+20*i);
-                        if ((i==2 || i==7 || i==12 || i==17 || i==23) && misterXMoves<i){  
+                        if ((i==2 || i==7 || i==12 || i==17 || i==23) && misterXMoves-1<i){  
                             g.drawString("Aufdecken!", getWidth()/4, getHeight()/2-285+20*i);    
                         }
                     }

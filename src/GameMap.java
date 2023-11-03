@@ -232,7 +232,7 @@ public class GameMap{
         return this.round-lastDoubleMove>0;
     }
 
-    public void makeMove(int moveTime) throws InterruptedException{
+    public void makeMove(){
         if (twoPlayersSameField()){
             System.out.println("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
             throw new IllegalStateException("ZWEI SPIELER STEHEN AUF DEM GLEICHEN FELD");
@@ -261,7 +261,7 @@ public class GameMap{
 
         if (move==null){
            
-            Thread.sleep(moveTime);
+            
             if (detectives.contains(currentPlayer)){
                 int index=detectives.indexOf(currentPlayer);
                 if (index<3){
@@ -280,8 +280,6 @@ public class GameMap{
                 throw new IllegalArgumentException("VEHICLE-TYPE CANNOT BE NULL");
             }
 
-         
-            Thread.sleep(moveTime);
             currentPlayer.setCurrentField(move.getTargetField());
             currentPlayer.reduceTickets(move.getVehicleTyp());
            

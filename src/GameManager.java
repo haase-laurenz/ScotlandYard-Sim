@@ -40,8 +40,9 @@ public class GameManager {
             
             while(gameMap.getGameState()==GameState.ONGOING){
                 
-                gameMap.makeMove(moveTime);
+                gameMap.makeMove();
                 gameGUI.drawPlayers(gameMap.getDetectives(),gameMap.getMisterX(),gameMap.getLastMisterXFields().getLast(),gameMap.getLastMisterXVehicleTypes(),gameMap.getMisterXCloud(),gameMap.getRounds(),currentGame,detective_wins,misterX_wins,total_rounds);
+                Thread.sleep(moveTime);
             }
             if (gameMap.getGameState()==GameState.DETECTIVES_WIN){
                 detective_wins++;
