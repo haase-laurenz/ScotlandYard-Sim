@@ -56,7 +56,7 @@ public class GameGUI {
                         protected Void doInBackground() throws Exception {
                             running = true;
                             try {
-                                gameManager.playGames(2000,moveTime);
+                                gameManager.playGames(500,moveTime);
                                 running = false;
                             } catch (IOException | InterruptedException e1) {
                                 e1.printStackTrace();
@@ -197,7 +197,7 @@ public class GameGUI {
                     int y = coords[1];
                     Color transparentColor = new Color(colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue(), 200); // 128 steht für die Transparenz (0-255)
                     g.setColor(transparentColor);
-                    g.fillOval(x, y, 40, 40);  
+                    g.fillOval(x, y, 40, 40); 
 
                 }
                 if (misterXVehicleTypes!=null){
@@ -210,9 +210,26 @@ public class GameGUI {
                         g.drawString("Last MisterX Field: "+lastMisterXField.getId(), getWidth()/2, 175);
                     }
 
-                    for(int i=0;i<misterXVehicleTypes.size();i++){
-                        g.drawString("Move "+(i+1)+": "+misterXVehicleTypes.get(i), 200, getHeight()/2-285+15*i);
+                    int  misterXMoves=misterXVehicleTypes.size();
+                    for(int i=0;i<24;i++){
+                        g.drawString("Move "+(i+1)+": ", getWidth()/7, getHeight()/2-285+20*i);
+                        g.drawLine(getWidth()/7,getHeight()/2-280+20*i,getWidth()/4,getHeight()/2-280+20*i);
+                        if ((i==2 || i==7 || i==12 || i==17 || i==23) && misterXMoves<i){  
+                            g.drawString("Aufdecken!", getWidth()/4, getHeight()/2-285+20*i);    
+                        }
                     }
+                    int count=0;
+                    for(int i=0;i<misterXVehicleTypes.size();i++){
+                        g.drawString(""+misterXVehicleTypes.get(i), getWidth()/5, getHeight()/2-285+20*i);
+                        if (i==2 || i==7 || i==12 || i==17 || i==23){
+                            count++;
+                            Field field=gameManager.getGameMap().getLastMisterXFields().get(count);
+                            g.drawString("Bin Feld "+field.getId(), getWidth()/4, getHeight()/2-285+20*i); 
+                        }
+                        
+                    }
+
+                    
 
                     double schnitt=Math.round(((double) misterX_wins / (misterX_wins + detective_wins)) * 10000) / 100.0;
                     if (currentGame==1){

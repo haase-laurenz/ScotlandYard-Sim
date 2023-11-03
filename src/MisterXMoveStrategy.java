@@ -59,7 +59,7 @@ public class MisterXMoveStrategy {
             int activity=graph.get(key).get(0).size()+graph.get(key).get(1).size()*2+graph.get(key).get(2).size()*3+graph.get(key).get(3).size()*4;
             int round=gameMap.getRounds();
 
-            if (activity>10 && misterX.getTickets().get(VehicleType.BLACK_TICKET)>0 && gameMap.getRounds()>2 && round!=7 && round!=12 && round!=17 && round!=23){
+            if (activity>10 && misterX.getTickets().get(VehicleType.BLACK_TICKET)>0 && gameMap.getRounds()>2 && round!=6 && round!=11 && round!=16 && round!=22){
                 bestMove.setMoveVehicleType_BlackTicket();
             }
 
