@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -7,30 +8,58 @@ public class DetectiveMoveStrategy {
         List<Move> myMoves=gameMap.getLegalMoves(detective,true);
      
         if (myMoves.size()==0) return null;
-       
-        int bestScore=1000;
+
         Move bestMove=null;
 
         if (gameMap.getMisterXCloud().size()>0){
+
+            int bestScore=Integer.MAX_VALUE;
             
+
+            int detectivesCountAfterMe=3-detective.getId();
+
+            List<Field> closestFieldsForAfterDetectives=new ArrayList<>();
+            List<Integer> distanceToClosestField=new ArrayList<>();
+
+            if (detectivesCountAfterMe>0){
+
+                for (Detective otherDetective:gameMap.getDetectives().subList(4-detectivesCountAfterMe, 3)){
+                    Field closestField=null;
+                    int minDist=0;
+
+                    for(Field field:gameMap.getMisterXCloud()){
+                        int distance=gameMap.distanceBetween(otherDetective.getCurrentField(), field,true);
+                        if (distance<minDist){
+                            closestField=field;
+                            minDist=distance;
+                        }
+                    }
+
+                    distanceToClosestField.add(minDist);
+                    closestFieldsForAfterDetectives.add(closestField);
+                }   
+            }
+
             for (Move move:myMoves){
-                int minDist=1000;
+
+                int minDist=Integer.MAX_VALUE;
+
                 for(Field field:gameMap.getMisterXCloud()){
                     int distance=gameMap.distanceBetween(move.getTargetField(), field,true);
-                    if (distance<minDist){
+                    if (distance<minDist && (!closestFieldsForAfterDetectives.contains(field) || distance-distanceToClosestField.get(closestFieldsForAfterDetectives.indexOf(field))>0)){
                         minDist=distance;
                     }
                 }
+
                 if (minDist<bestScore){
                     bestScore=minDist;
                     bestMove=move;
                 }
-                
             }
         }else{
 
             //FINDING A GOOD POSITION AFTER 2 MOVES (we want Max Activity, when MisterX has to show his position)
-
+           
             HashMap<Integer,List<List<Integer>>> graph=gameMap.getGraph();
         
             int maxActivity=Integer.MIN_VALUE;
